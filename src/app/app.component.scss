@@ -1,0 +1,95 @@
+
+
+h1 {
+    padding: 0 1rem;
+}
+
+h2 {padding: 1rem;}
+
+.main-content-wrapper {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: start;
+}
+
+.left-content {
+    position: fixed;
+    height: calc(100vh - 70px);
+    top: 70px;
+    padding: 20px;
+    background: white;
+    z-index: 99;
+    box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.5);
+}
+
+.right-content {
+    width: calc(100vw - 170px);
+    margin-left: 100px;
+    margin-top: 100px;
+}
+
+.mat-toolbar{
+    display: flex;
+    position: fixed;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    top:0;
+    height: fit-content;
+    z-index: 99;
+    width: 100%;
+    height: 70px;
+}
+
+.menu-bar-right-element {
+    padding: 0px 20px;
+}
+
+.menu-header-logo-txt, .menu-bar-left-element {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-card-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mat-toolbar {
+    background: #6785C1;
+}
+
+.menu-nav-title {
+    font-size: 20px;
+    color: white;
+}
+
+.mat-toolbar {
+    box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.5);
+}
+
+.actions-bar-wrapper {
+    display: flex;
+    gap: 20px;
+    border-radius: 6px;
+    background: #6785C1;
+    color: white;
+    padding: 12px 24px;
+    margin-bottom: 30px;
+
+}
+
+.user-actions-wrapper {
+    display: flex;
+    color: white;
+    gap: 18px;
+    align-items: center;
+}
+
+mat-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+}

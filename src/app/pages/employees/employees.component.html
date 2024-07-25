@@ -1,0 +1,51 @@
+<div class="fleets-page-wrapper">
+    <div class="actions">
+      <div class="search-wrapper">
+        <input
+          #searchInput
+          (keydown.enter)="searchInputListener(searchInput.value)"
+          (input)="inputListener(searchInput.value)"
+          class="search"
+          type="text"
+          placeholder="Search"
+        />
+        <button (click)="searchInputListener(searchInput.value)">Search</button>
+        <button
+          class="rlow-scale"
+          [ngClass]="{ disabled: selectedRow == null }"
+          (click)="onRemoveSelected()"
+        >
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+        <button
+          class="low-scale"
+          [ngClass]="{ disabled: selectedRow == null }"
+          (click)="editRow()"
+        >
+        <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          class="low-scale"
+          [ngClass]="{ disabled: selectedRow == null }"
+          (click)="addAllocation()"
+        >
+        <mat-icon>timeline</mat-icon>
+        </button>
+      </div>
+      <button class="add-employee-wrapper" (click)="addEmployee()">
+        <mat-icon>control_point</mat-icon>Add Employee
+      </button>
+    </div>
+  
+    <ag-grid-angular
+      [rowData]="filteredEmployees"
+      [columnDefs]="employeesColumns"
+      [rowSelection]="'single'"
+      [gridOptions]="gridOptions"
+      class="ag-theme-quartz"
+      style="height: 600px"
+      (gridReady)="onGridReady($event)"
+      (rowClicked)="onRowClicked()"
+    />
+  </div>
+  

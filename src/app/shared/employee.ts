@@ -1,0 +1,50 @@
+import { Employee } from '../models/employee.model';
+
+export const emptyEmployeeObj: Employee = {
+  id: '',
+  firstName: '',
+  lastName: '',
+  cnp: '',
+  drivingLicenseExDate: 0,
+  drivingLicenseCategories: [],
+  email: '',
+  phone: '',
+  jobDepartment: '',
+  emergencyContactName: '',
+  emergencyContactPhoneNumber: '',
+};
+
+export const jobDepartments: string[] = [
+  "Administrative",
+  "Business Intelligence",
+  "Cloud Services",
+  "Compliance",
+  "Customer Success",
+  "Cybersecurity",
+  "Data Science",
+  "Database Administration",
+  "DevOps",
+  "Finance",
+  "Human Resources",
+  "IT Support",
+  "Information Security",
+  "Legal",
+  "Marketing",
+  "Mobile Development",
+  "Network Engineering",
+  "Operations",
+  "Product Management",
+  "Project Management",
+  "Quality Assurance",
+  "Research and Development",
+  "Sales Engineering",
+  "Systems Engineering",
+  "Technical Support",
+  "Technical Writing",
+  "Training and Development",
+  "UI/UX Design",
+  "Vendor Management",
+  "Web Development",
+  "Other"
+];
+

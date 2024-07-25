@@ -1,0 +1,23 @@
+section {
+    display: table;
+  }
+  
+  .example-button-row {
+    display: table-cell;
+    max-width: 600px;
+  }
+  
+  .example-button-row .mat-mdc-button-base {
+    margin: 8px 8px 8px 0;
+  }
+
+  .login-btn-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 60px 0px 30px 0px;
+  }
+
+  .logout-btn {
+    box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.5);
+  }

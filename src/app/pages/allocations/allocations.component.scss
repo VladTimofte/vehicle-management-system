@@ -1,0 +1,27 @@
+.actions {
+    display: flex;
+    place-content: flex-end;
+    padding-bottom: 20px;
+    justify-content: space-between;
+
+    .search {
+        box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.5);
+    }
+
+    .search-wrapper {
+        display: flex;
+        gap: 20px;
+    }
+
+    button.disabled {
+        background: gray;
+        pointer-events: none;
+    }
+}
+
+.add-allocation-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}

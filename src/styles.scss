@@ -1,0 +1,124 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the theme object.
+$fleet-management-system-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette,
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+:root {
+  @include mat.all-component-themes($fleet-management-system-theme);
+}
+
+// Comment out the line below if you want to use the pre-defined typography utility classes.
+// For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
+// @include mat.typography-hierarchy($fleet-management-system-theme);
+
+// Comment out the line below if you want to use the deprecated `color` inputs.
+// @include mat.color-variants-backwards-compatibility($fleet-management-system-theme);
+
+
+
+html, body { height: 100%; width: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+h3 {
+    margin: 0 !important;
+}
+
+span {
+    color: black;
+}
+
+button {
+    cursor: pointer;
+    background: #6785C1;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px 12px 24px;
+    font-size: 16px;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+app-root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.low-scale:hover {
+    cursor: pointer !important;
+    transform: scale(1.1);
+}
+
+select {
+    width: 100%;
+    height: 30px;
+    border-radius: 6px;
+}
+
+.flex-center {
+    justify-content: center;
+    display: flex;
+}
+
+label {
+    font-size: 16px;
+    margin-bottom: 6px;
+    margin-top: 6px;
+    font-weight: 600;
+}
+
+input, select {
+    height: auto;
+    border: 2px solid black;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 6px;
+    width: -webkit-fill-available;
+    padding: 2px 4px;
+}
+
+ag-grid-angular {
+    box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.5);
+}
+
+.pointer-events-none {
+ pointer-events: none;   
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.align-self-center {
+    align-self: center;
+}
+
+.hidden {
+    display: none;
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

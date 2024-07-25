@@ -1,0 +1,310 @@
+<div (click)="onCancel()" class="backdrop"></div>
+<dialog open>
+  <h2 class="modal-title">
+    {{ isFleetUpdating ? "Edit " + vehicle.plateNumber : "Add Fleet" }}
+  </h2>
+  <hr>
+  <form [formGroup]="modalForm" (ngSubmit)="onSubmit()">
+    <div class="form-wrapper">
+      <div class="row">
+        <div class="form-item">
+          <label for="plateNumber">Plate Number</label>
+          <input
+            type="text"
+            id="plateNumber"
+            formControlName="plateNumber"
+            placeholder="Enter license plate number"
+          />
+          <div
+            *ngIf="
+              modalForm.get('plateNumber')?.invalid &&
+              modalForm.get('plateNumber')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('plateNumber')?.hasError('required')"
+              >Plate Number is required.</small
+            >
+            <small
+              class="error-message"
+              *ngIf="
+                modalForm.get('plateNumber')?.hasError('invalidLicensePlate')
+              "
+              >Invalid license plate number.(Ex. AB12CDE, B02345, TM045678
+              etc)</small
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-item">
+          <div class="label-wrapper">
+            <label for="make">Make</label>
+            <mat-spinner
+              class="mat-spinner"
+              *ngIf="loadingMakes"
+              style="width: 18px; height: 18px"
+            ></mat-spinner>
+            <mat-icon *ngIf="!loadingMakes">done</mat-icon>
+          </div>
+          <select
+            id="make"
+            formControlName="make"
+            (change)="onMakeSelection($event)"
+            [ngClass]="{ 'pointer-events-none': loadingMakes }"
+          >
+            <option value="">
+              {{ loadingMakes ? "Loading" : "Select Make" }}
+            </option>
+            <option *ngFor="let make of availableMakes" [value]="make">
+              {{ make }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              modalForm.get('make')?.invalid && modalForm.get('make')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('make')?.hasError('required')"
+              >Make is required.</small
+            >
+          </div>
+        </div>
+
+        <div class="form-item">
+          <div class="label-wrapper">
+            <label for="model">Model</label>
+            <mat-spinner
+              class="mat-spinner"
+              *ngIf="loadingModels"
+            ></mat-spinner>
+            <mat-icon *ngIf="!loadingModels">done</mat-icon>
+          </div>
+          <select
+            id="model"
+            formControlName="model"
+            [ngClass]="{ 'pointer-events-none': loadingModels }"
+          >
+            <option value="" *ngIf="!modalForm.get('make')?.value">
+              Please select a make first
+            </option>
+            <option value="" *ngIf="modalForm.get('make')?.value && !loadingModels">
+              Select Model
+            </option>
+            <option value="" *ngIf="loadingModels">
+              Loading
+            </option>
+            <option *ngFor="let model of availableModels" [value]="model">
+              {{ model }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              modalForm.get('model')?.invalid && modalForm.get('model')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('model')?.hasError('required')"
+              >Model is required.</small
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-item">
+          <label for="manufactureYear">Year Of Manufacture</label>
+          <input
+            type="number"
+            id="manufactureYear"
+            formControlName="manufactureYear"
+          />
+          <div
+            *ngIf="
+              modalForm.get('manufactureYear')?.invalid &&
+              modalForm.get('manufactureYear')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('manufactureYear')?.hasError('required')"
+              >Year Of Manufacture is required.</small
+            >
+          </div>
+        </div>
+        <div class="form-item">
+          <label for="vinNumber">VIN Nr.</label>
+          <input type="text" id="vinNumber" formControlName="vinNumber" />
+          <div
+            *ngIf="
+              modalForm.get('vinNumber')?.invalid &&
+              modalForm.get('vinNumber')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('vinNumber')?.hasError('required')"
+              >VIN Number is required.</small
+            >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('vinNumber')?.hasError('staticLength')"
+              >VIN nr. should be 17 Characters length</small
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-item">
+          <label for="engineHorsePower">Engine HP</label>
+          <input
+            type="number"
+            id="engineHorsePower"
+            formControlName="engineHorsePower"
+          />
+          <div
+            *ngIf="
+              modalForm.get('engineHorsePower')?.invalid &&
+              modalForm.get('engineHorsePower')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('engineHorsePower')?.hasError('required')"
+              >Engine HP is required.</small
+            >
+          </div>
+        </div>
+        <div class="form-item">
+          <label for="engineCapacityCC">Engine Capacity CC</label>
+          <input
+            type="number"
+            id="engineCapacityCC"
+            formControlName="engineCapacityCC"
+          />
+          <div
+            *ngIf="
+              modalForm.get('engineCapacityCC')?.invalid &&
+              modalForm.get('engineCapacityCC')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('engineCapacityCC')?.hasError('required')"
+              >Engine Capacity CC is required.</small
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-item">
+          <label for="fuelType">Fuel type</label>
+          <select id="fuelType" formControlName="fuelType">
+            <option *ngFor="let type of fuelTypes" [value]="type">
+              {{ type }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              modalForm.get('fuelType')?.invalid &&
+              modalForm.get('fuelType')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('fuelType')?.hasError('required')"
+              >Fuel type is required.</small
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+
+        <div class="form-item">
+          <label for="expirationDateITP">ITP Exp. Date</label>
+          <mat-form-field>
+            <mat-label>Choose a date</mat-label>
+            <input
+              type="text"
+              id="expirationDateITP"
+              formControlName="expirationDateITP"
+              matInput
+              [matDatepicker]="pickerITP"
+            />
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="pickerITP"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #pickerITP></mat-datepicker>
+          </mat-form-field>
+          <div
+            *ngIf="
+              modalForm.get('expirationDateITP')?.invalid &&
+              modalForm.get('expirationDateITP')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="
+                modalForm.get('expirationDateITP')?.hasError('required')
+              "
+              >Expiration Date ITP is required.</small
+            >
+          </div>
+        </div>
+
+        <div class="form-item">
+          <label for="expirationDateRCA">RCA Exp. Date</label>
+          <mat-form-field>
+            <mat-label>Choose a date</mat-label>
+            <input
+              type="text"
+              id="expirationDateRCA"
+              formControlName="expirationDateRCA"
+              matInput
+              [matDatepicker]="pickerRCA"
+            />
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="pickerRCA"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #pickerRCA></mat-datepicker>
+          </mat-form-field>
+          <div
+            *ngIf="
+              modalForm.get('expirationDateRCA')?.invalid &&
+              modalForm.get('expirationDateRCA')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="
+                modalForm.get('expirationDateRCA')?.hasError('required')
+              "
+              >Expiration Date RCA is required.</small
+            >
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <p class="actions">
+      <button type="button" (click)="onCancel()">Cancel</button>
+      <button type="submit">
+        {{ isFleetUpdating ? "Update" : "Add" }}
+      </button>
+    </p>
+  </form>
+</dialog>

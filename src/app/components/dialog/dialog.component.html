@@ -1,0 +1,30 @@
+<!-- dialog.component.html -->
+<div class="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <mat-icon class="error-icon" *ngIf="type === 'error'">highlight_off</mat-icon>
+          <mat-icon class="question-icon" *ngIf="type === 'question'">help_outline</mat-icon>
+          <mat-icon class="warning-icon" *ngIf="type === 'warning'">warning_amber</mat-icon>
+          <mat-icon class="info-icon" *ngIf="type === 'info'">info</mat-icon>
+          {{ title }}
+        </h3>
+        <span>&times;</span>
+      </div>
+      <br />
+      <div class="modal-body">
+        <p>{{ message }}</p>
+      </div>
+      <br />
+      <div class="modal-footer">
+        <button *ngIf="type === 'question'" type="button" class="btn btn-secondary" (click)="cancel()">
+          Cancel
+        </button>        
+        <button type="button" class="btn btn-primary" (click)="confirm()">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

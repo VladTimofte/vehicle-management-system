@@ -1,0 +1,146 @@
+<div (click)="onCancel()" class="backdrop"></div>
+<dialog open>
+  <h2 class="modal-title">
+    {{ isAllocationUpdating ? "Edit " + allocation.id : "Create Allocation" }}
+  </h2>
+  <hr />
+  <form [formGroup]="modalForm" (ngSubmit)="onSubmit()">
+    <div class="form-wrapper">
+      <div class="row">
+        <mat-form-field>
+          <mat-label>Enter a date range</mat-label>
+          <mat-date-range-input [rangePicker]="picker" [min]="minDate">
+            <input
+              matStartDate
+              placeholder="Start date"
+              type="text"
+              id="startDate"
+              formControlName="startDate"
+              (dateChange)="keepAvailableVehiclesUpdated()"
+            />
+            <input
+              matEndDate
+              placeholder="End date"
+              type="text"
+              id="endDate"
+              formControlName="endDate"
+              (dateChange)="keepAvailableVehiclesUpdated()"
+            />
+          </mat-date-range-input>
+          <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+          <div
+            *ngIf="
+              (modalForm.get('startDate')?.invalid ||
+                modalForm.get('endDate')?.invalid) &&
+              (modalForm.get('startDate')?.touched ||
+                modalForm.get('endDate')?.touched) &&
+              (modalForm.get('employeeId')?.touched ||
+                modalForm.get('employeeId')?.touched)
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="
+                modalForm.get('startDate')?.hasError('required') ||
+                modalForm.get('endDate')?.hasError('required') ||
+                modalForm.get('employeeId')?.hasError('required')
+              "
+              >Date is required.</small
+            >
+          </div>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+      </div>
+
+      <br />
+
+      <div class="row">
+        <div class="form-item">
+          <div class="label-wrapper">
+            <label for="employeeId">Employee</label>
+          </div>
+          <select
+            id="employeeId"
+            formControlName="employeeId"
+            (change)="keepAvailableVehiclesUpdated()"
+          >
+            <option value="">Select an employee</option>
+            <option *ngFor="let employee of employees" [value]="employee?.id">
+              {{ employee?.firstName + " " + employee?.lastName }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              modalForm.get('employeeId')?.invalid &&
+              modalForm.get('employeeId')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('employeeId')?.hasError('required')"
+              >Employee is required.</small
+            >
+          </div>
+        </div>
+
+        <div class="form-item">
+          <div class="label-wrapper">
+            <label for="vehicleId">Available Vehicles</label>
+            <mat-spinner
+              class="mat-spinner"
+              *ngIf="isAvailableVehiclesLoading"
+              style="width: 18px; height: 18px"
+            ></mat-spinner>
+            <mat-icon *ngIf="!isAvailableVehiclesLoading">done</mat-icon>
+          </div>
+          <select
+            id="vehicleId"
+            formControlName="vehicleId"
+            [ngClass]="{ 'pointer-events-none': isAvailableVehiclesLoading }"
+          >
+            <option value="">
+              {{
+                isAvailableVehiclesLoading
+                  ? "Select Date and Employee First"
+                  : "Select Vehicle"
+              }}
+            </option>
+            <option
+              *ngFor="let vehicle of availableVehicles"
+              [value]="vehicle.id"
+            >
+              {{
+                vehicle.make + " " + vehicle.model + " - " + vehicle.plateNumber
+              }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              modalForm.get('vehicleId')?.invalid &&
+              modalForm.get('vehicleId')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('vehicleId')?.hasError('required')"
+              >Vehicle is required.</small
+            >
+          </div>
+        </div>
+      </div>
+
+      <br />
+    </div>
+
+    <p class="actions">
+      <button type="button" (click)="onCancel()">Cancel</button>
+      <button type="submit">
+        {{ isAllocationUpdating ? "Update" : "Allocate" }}
+      </button>
+    </p>
+  </form>
+</dialog>
