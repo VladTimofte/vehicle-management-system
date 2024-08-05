@@ -21,7 +21,7 @@ import {
 import { AddEditVehicleModalComponent } from '../../components/add-edit-vehicle-modal/add-edit-vehicle-modal.component';
 import { AddEditEmployeeFormService } from 'src/app/services/add-edit-employee.service';
 import { DialogService } from 'src/app/services/dialog.service';
-import { EmployeesService } from 'src/app/services/employees.service';
+import { EmployeesService } from '@src/app/services/crud/employees.service';
 import { Employee } from 'src/app/models/employee.model';
 import { emptyEmployeeObj } from 'src/app/shared/employee';
 import { documentExpired, documentExpiresWithinMonth } from 'src/app/utils/booleans';
@@ -41,7 +41,7 @@ import { AddEditAllocationFormService } from 'src/app/services/add-edit-allocati
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmployeesComponent implements OnInit, OnDestroy {
-  public filteredEmployees: Employee[] = [];
+  public employees: Employee[] = [];
   private EmployeesSubscription: Subscription | undefined;
   public searchTerm: string = '';
   private gridApi!: GridApi;
@@ -63,7 +63,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
     this.EmployeesSubscription = this.employeeService
       .getEmployeesObservable()
       .subscribe((employees) => {
-        this.updateFilteredEmployees(employees);
+        this.updateGrid(employees)
       });
   }
 
@@ -111,59 +111,11 @@ export class EmployeesComponent implements OnInit, OnDestroy {
     },
   ];
 
-  private updateFilteredEmployees(employees: Employee[]): void {
-    // Update filteredEmployees based on current search term
-    this.filteredEmployees = this.filterEmployees(this.searchTerm, employees);
-    if (this.gridApi) {
-      const rowData: any[] = [];
-      this.gridApi.forEachNode(function (node) {
-        rowData.push(node.data);
-      });
-      this.gridApi.applyTransaction({
-        remove: rowData,
-      })!;
-      this.gridApi.applyTransaction({
-        add: this.filteredEmployees,
-      })!;
-    }
-  }
-
-  searchInputListener(value: string) {
-    // Update search term and filteredEmployees
-    this.searchTerm = value;
-    this.filteredEmployees = this.filterEmployees(
-      value,
-      this.employeeService.getEmployees()
-    );
-  }
-
-  inputListener(value: string) {
-    // Handle input changes to update filteredEmployees
-    if (!value?.length) {
-      this.filteredEmployees = this.employeeService.getEmployees();
-    }
-  }
-
-  private filterEmployees(
-    searchTerm: string,
-    employees: Employee[]
-  ): Employee[] {
-    // Check if searchTerm is null, undefined, or an empty string
-    if (!searchTerm) {
-      return this.employeeService.getEmployees();
-    }
-
-    // Filter fleets based on search term
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    return employees.filter((employee) =>
-      Object.keys(employee).some((key) => {
-        const propValue = employee[key as keyof typeof employee];
-        return (
-          key !== 'id' &&
-          propValue !== null &&
-          propValue.toString().toLowerCase().includes(lowerCaseSearchTerm)
-        );
-      })
+  inputListener() {
+    // Handle input changes
+    this.gridApi!.setGridOption(
+      "quickFilterText",
+      (document.getElementById("filter-text-box") as HTMLInputElement).value,
     );
   }
 
@@ -247,4 +199,21 @@ export class EmployeesComponent implements OnInit, OnDestroy {
       });
       this.deselectRows()
   }
+
+  private updateGrid(data: Employee[]): void {
+    this.employees = data;
+    if (this.gridApi) {
+      const rowData: Employee[] = [];
+      this.gridApi.forEachNode(function (node) {
+        rowData.push(node.data);
+      });
+      this.gridApi.applyTransaction({
+        remove: rowData,
+      })!;
+      this.gridApi.applyTransaction({
+        add: this.employees,
+      })!;
+    }
+  }
+
 }

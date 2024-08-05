@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
+import { AuthService } from 'src/app/services/auth.service';
 import { CommonModule, DOCUMENT } from '@angular/common';
 
 @Component({
@@ -12,4 +12,11 @@ import { CommonModule, DOCUMENT } from '@angular/common';
 export class AppAuthButtonComponent {
   constructor(@Inject(DOCUMENT) public document: Document, public auth: AuthService) {}
 
+  loginWithRedirect() {
+    this.auth.loginWithRedirect();
+  }
+
+  logout() {
+    this.auth.logout({ logoutParams: { returnTo: this.document.location.origin } });
+  }
 }

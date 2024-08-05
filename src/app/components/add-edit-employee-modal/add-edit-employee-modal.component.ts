@@ -23,7 +23,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { DateTime } from 'luxon';
 
 import { Employee } from 'src/app/models/employee.model';
-import { EmployeesService } from 'src/app/services/employees.service';
+import { EmployeesService } from '@src/app/services/crud/employees.service';
 import { jobDepartments } from 'src/app/shared/employee';
 import { isCNPValid } from 'src/app/utils/strings';
 import { DrivingLicenseCategoriesComponent } from "../driving-license-categories/driving-license-categories.component";

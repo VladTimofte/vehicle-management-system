@@ -24,31 +24,26 @@
         <a mat-list-item (click)="navigateTo('')">
           <span class="entry">
             <mat-icon class="low-scale">house</mat-icon>
-            <span *ngIf="!isCollapsed">Dashboard</span>
           </span>
         </a>
         <a mat-list-item (click)="navigateTo('vehicles')">
           <span class="entry">
             <mat-icon class="low-scale">drive_eta</mat-icon>
-            <span *ngIf="!isCollapsed">Fleets</span>
           </span>
         </a>
         <a mat-list-item (click)="navigateTo('employees')">
           <span class="entry">
             <mat-icon class="low-scale">people</mat-icon>
-            <span *ngIf="!isCollapsed">Employees</span>
           </span>
         </a>
         <a mat-list-item (click)="navigateTo('allocations')">
           <span class="entry">
             <mat-icon class="low-scale">timeline</mat-icon>
-            <span *ngIf="!isCollapsed">Allocations</span>
           </span>
         </a>
         <a mat-list-item (click)="navigateTo('track')">
           <span class="entry">
             <mat-icon class="low-scale">near_me</mat-icon>
-            <span *ngIf="!isCollapsed">Track</span>
           </span>
         </a>
       </div>
@@ -62,7 +57,6 @@
       <router-outlet></router-outlet>
     </div>
   </div>
-      
 </ng-container>
 
 <ng-template #loggedOut>

@@ -2,14 +2,12 @@
   <div class="actions">
     <div class="search-wrapper">
       <input
-        #searchInput
-        (keydown.enter)="searchInputListener(searchInput.value)"
-        (input)="inputListener(searchInput.value)"
+        id="filter-text-box"
+        (input)="inputListener()"
         class="search"
         type="text"
         placeholder="Search"
       />
-      <button (click)="searchInputListener(searchInput.value)">Search</button>
       <button
         class="rlow-scale"
         [ngClass]="{ disabled: selectedRow == null }"
@@ -26,12 +24,12 @@
       </button>
     </div>
     <button class="add-fleet-wrapper" (click)="addFleet()">
-      <mat-icon>control_point</mat-icon>Add Fleet
+      <mat-icon>control_point</mat-icon>Add Vehicle
     </button>
   </div>
 
   <ag-grid-angular
-    [rowData]="filteredFleets"
+    [rowData]="vehicles"
     [columnDefs]="fleetsColumns"
     [rowSelection]="'single'"
     class="ag-theme-quartz"

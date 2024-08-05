@@ -13,12 +13,12 @@ import { DateTime } from 'luxon';
 
 import { AddEditVehicleModalComponent } from '../../components/add-edit-vehicle-modal/add-edit-vehicle-modal.component';
 import { DialogService } from 'src/app/services/dialog.service';
-import { AllocationsService } from 'src/app/services/allocations.service';
+import { AllocationsService } from 'src/app/services/crud/allocations.service';
 import { Allocation } from 'src/app/models/allocation.model';
 import { AddEditAllocationFormService } from 'src/app/services/add-edit-allocation.service';
 import { emptyAllocationObj } from 'src/app/shared/allocation';
-import { EmployeesService } from 'src/app/services/employees.service';
-import { VehiclesService } from '@src/app/services/vehicles.service';
+import { EmployeesService } from '@src/app/services/crud/employees.service';
+import { VehiclesService } from '@src/app/services/crud/vehicles.service';
 import { Employee } from 'src/app/models/employee.model';
 import { Vehicle } from 'src/app/models/vehicle.model';
 
@@ -38,21 +38,23 @@ import { Vehicle } from 'src/app/models/vehicle.model';
 export class AllocationsComponent implements OnInit, OnDestroy {
   public filteredAllocations: Allocation[] = [];
   private AllocationsSubscription: Subscription | undefined;
+  private VehiclesSubscription: Subscription | undefined;
+  private EmployeesSubscription: Subscription | undefined;
   public searchTerm: string = '';
   private gridApi!: GridApi;
   public selectedRow: any;
   employees: Employee[];
-  fleets: Vehicle[];
+  vehicles: Vehicle[];
 
   constructor(
     private allocationsService: AllocationsService,
     private addEditAllocationFormService: AddEditAllocationFormService,
     private dialogService: DialogService,
     private employeesService: EmployeesService,
-    private fleetsService: VehiclesService
+    private vehiclesService: VehiclesService
   ) {
+    this.vehicles = this.vehiclesService.getVehicles();
     this.employees = this.employeesService.getEmployees();
-    this.fleets = this.fleetsService.getFleets();
   }
 
   ngOnInit(): void {
@@ -62,12 +64,32 @@ export class AllocationsComponent implements OnInit, OnDestroy {
       .subscribe((allocations) => {
         this.updateFilteredAllocations(allocations);
       });
+      // Subscribe to Vehicles observable
+      this.VehiclesSubscription = this.vehiclesService
+      .getVehiclesObservable()
+      .subscribe((vehicles) => {
+        this.vehicles = vehicles
+      });
+      // Subscribe to EmployeesSubscription observable
+      this.EmployeesSubscription = this.employeesService
+      .getEmployeesObservable()
+      .subscribe((employee) => {
+        this.employees = employee
+      });
   }
 
   ngOnDestroy(): void {
     // Unsubscribe from Allocations observable to avoid memory leaks
     if (this.AllocationsSubscription) {
       this.AllocationsSubscription.unsubscribe();
+    }
+    // Unsubscribe from Vehicles observable to avoid memory leaks
+    if (this.VehiclesSubscription) {
+      this.VehiclesSubscription.unsubscribe();
+    }
+    // Unsubscribe from Employees observable to avoid memory leaks
+    if (this.EmployeesSubscription) {
+      this.EmployeesSubscription.unsubscribe();
     }
   }
 
@@ -78,6 +100,7 @@ export class AllocationsComponent implements OnInit, OnDestroy {
   employeesColumns: ColDef[] = [
     {
       field: 'employeeId',
+      headerName: 'Employee',
       flex: 2,
       filter: false,
       cellRenderer: (params: { value: string }) => {
@@ -89,10 +112,11 @@ export class AllocationsComponent implements OnInit, OnDestroy {
     },
     {
       field: 'vehicleId',
+      headerName: 'Vehicle',
       flex: 2,
       filter: false,
       cellRenderer: (params: { value: string }) => {
-        var foundFleet = this.fleets.find((el) => el.id === params.value);
+        var foundFleet = this.vehicles.find((el) => el.id === params.value);
         return foundFleet ? 
           foundFleet?.make +
           ' ' +
@@ -183,7 +207,7 @@ export class AllocationsComponent implements OnInit, OnDestroy {
           return false;
         } else if (key === 'vehicleId') {
           // Find vehicle by ID
-          const vehicle = this.fleets.find(f => f.id === propValue);
+          const vehicle = this.vehicles.find(f => f.id === propValue);
           if (vehicle) {
             return (
               vehicle.make.toLowerCase().includes(lowerCaseSearchTerm) ||
@@ -249,7 +273,7 @@ export class AllocationsComponent implements OnInit, OnDestroy {
     const assignedEmployee = this.employees.find(
       (el) => el.id === selectedData?.employeeId
     );
-    const assignedVehicle = this.fleets.find(
+    const assignedVehicle = this.vehicles.find(
       (el) => el.id === selectedData?.vehicleId
     );
     this.dialogService

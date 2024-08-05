@@ -23,12 +23,12 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { DateTime } from 'luxon';
 
 import { Allocation } from 'src/app/models/allocation.model';
-import { AllocationsService } from 'src/app/services/allocations.service';
+import { AllocationsService } from 'src/app/services/crud/allocations.service';
 import { Employee } from 'src/app/models/employee.model';
-import { EmployeesService } from 'src/app/services/employees.service';
+import { EmployeesService } from '@src/app/services/crud/employees.service';
 import { Vehicle } from 'src/app/models/vehicle.model';
 import { DialogService } from 'src/app/services/dialog.service';
-import { VehiclesService } from '@src/app/services/vehicles.service';
+import { VehiclesService } from '@src/app/services/crud/vehicles.service';
 import { constructExpiredDocsDialogData } from 'src/app/utils/objects';
 
 @Component({
@@ -76,7 +76,7 @@ export class AddEditAllocationModalComponent {
       endDate: ['', Validators.required],
     });
     this.employees = this.employeesService.getEmployees();
-    this.fleets = this.vehiclesService.getFleets();
+    this.fleets = this.vehiclesService.getVehicles();
     this.minDate = new Date();
     console.log(this.minDate);
   }
