@@ -40,13 +40,12 @@ import { documentExpired, documentExpiresWithinMonth } from 'src/app/utils/boole
 export class VehiclesComponent implements OnInit, OnDestroy {
   public vehicles: Vehicle[] = [];
   private vehiclesSubscription: Subscription | undefined;
-  public searchTerm: string = '';
   private gridApi!: GridApi;
   public selectedRow: any;
 
   constructor(
     private vehiclesService: VehiclesService,
-    private addEditFleetService: AddEditVehicleFormService,
+    private addEditVehicleService: AddEditVehicleFormService,
     private dialogService: DialogService
   ) {}
 
@@ -70,7 +69,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
     this.gridApi = params.api;
   }
 
-  fleetsColumns: ColDef[] = [
+  vehilcesColumns: ColDef[] = [
     {
       field: 'icon',
       flex: 0.75,
@@ -147,10 +146,10 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   private getIconClassName(fl: Vehicle) {
     // Find icon class name based on vehicle make
     const formattedMake = fl.make.trim().toLowerCase();
-    const foundFleet = MakeIconClassName.find(
+    const foundVehicle = MakeIconClassName.find(
       (vehicle: any) => vehicle.make.toLowerCase() === formattedMake
     );
-    return foundFleet ? foundFleet.iconClassName : null;
+    return foundVehicle ? foundVehicle.iconClassName : null;
   }
 
   inputListener() {
@@ -160,11 +159,11 @@ export class VehiclesComponent implements OnInit, OnDestroy {
     );
   }
 
-  addFleet() {
-    this.addEditFleetService
-      .openAddEditFleetForm({
+  addVehicle() {
+    this.addEditVehicleService
+      .openAddEditVehicleForm({
         vehicle: emptyVehicleObj,
-        isFleetUpdating: false,
+        isVehicleUpdating: false,
       })
       .then((confirmed: any) => {
         if (confirmed) {
@@ -183,10 +182,10 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   }
 
   editRow() {
-    this.addEditFleetService
-      .openAddEditFleetForm({
+    this.addEditVehicleService
+      .openAddEditVehicleForm({
         vehicle: this.selectedRow[0],
-        isFleetUpdating: true,
+        isVehicleUpdating: true,
       })
       .then((confirmed: any) => {
         if (confirmed) {
@@ -206,7 +205,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
       })
       .then((confirmed: any) => {
         if (confirmed) {
-          this.vehiclesService.removeFleet(selectedData.id);
+          this.vehiclesService.removeVehicle(selectedData.id);
         }
       });
       this.deselectRows();

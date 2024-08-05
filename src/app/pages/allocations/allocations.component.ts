@@ -116,13 +116,13 @@ export class AllocationsComponent implements OnInit, OnDestroy {
       flex: 2,
       filter: false,
       cellRenderer: (params: { value: string }) => {
-        var foundFleet = this.vehicles.find((el) => el.id === params.value);
-        return foundFleet ? 
-          foundFleet?.make +
+        var foundVehicle = this.vehicles.find((el) => el.id === params.value);
+        return foundVehicle ? 
+          foundVehicle?.make +
           ' ' +
-          foundFleet?.model +
+          foundVehicle?.model +
           ' - ' +
-          foundFleet?.plateNumber
+          foundVehicle?.plateNumber
         : 'Deleted Vehicle'
       },
     },

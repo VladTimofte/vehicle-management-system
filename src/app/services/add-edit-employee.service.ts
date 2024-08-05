@@ -22,7 +22,7 @@ export class AddEditEmployeeFormService {
       componentRef.instance.employee = data.employee;
       componentRef.instance.isEmployeeUpdating = data.isEmployeeUpdating;
 
-      componentRef.instance.isAddEditFleetConfirmed.subscribe((result: boolean) => {
+      componentRef.instance.isAddEditEmployeeConfirmed.subscribe((result: boolean) => {
         this.isDialogOpen = false;
         resolve(result);
         this.destroyComponent(componentRef);

@@ -22,11 +22,11 @@ export class VehiclesService {
     return this.storageFactory.getItemsObservable();
   }
 
-  addOrUpdateFleet(vehicle: Vehicle) {
+  addOrUpdateVehicle(vehicle: Vehicle) {
     this.storageFactory.addOrUpdateItem(vehicle);
   }
 
-  removeFleet(id: string) {
+  removeVehicle(id: string) {
     this.storageFactory.removeItem(id);
   }
 

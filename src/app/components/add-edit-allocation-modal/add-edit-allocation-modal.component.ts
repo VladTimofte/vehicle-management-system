@@ -58,7 +58,7 @@ export class AddEditAllocationModalComponent {
   modalForm: FormGroup;
   isSOSDivHidden: boolean = true;
   employees: Employee[];
-  fleets: Vehicle[];
+  vehicles: Vehicle[];
   availableVehicles: Vehicle[] = [];
   isAvailableVehiclesLoading: Boolean = true;
   minDate: Date;
@@ -76,7 +76,7 @@ export class AddEditAllocationModalComponent {
       endDate: ['', Validators.required],
     });
     this.employees = this.employeesService.getEmployees();
-    this.fleets = this.vehiclesService.getVehicles();
+    this.vehicles = this.vehiclesService.getVehicles();
     this.minDate = new Date();
     console.log(this.minDate);
   }
@@ -133,7 +133,7 @@ export class AddEditAllocationModalComponent {
   onSubmit() {
     if (this.modalForm.valid) {
 
-      const constructedLogicData = constructExpiredDocsDialogData(this.employees, this.fleets, this.allocation) 
+      const constructedLogicData = constructExpiredDocsDialogData(this.employees, this.vehicles, this.allocation) 
 
       if (constructedLogicData.areDocsExpired) {
         this.dialogService.openConfirmDialog({

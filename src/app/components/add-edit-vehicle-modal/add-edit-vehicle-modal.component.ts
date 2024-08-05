@@ -24,10 +24,10 @@ import { MakeModelService } from 'src/app/services/make-model.service';
 })
 export class AddEditVehicleModalComponent {
   @Input({ required: true }) vehicle!: Vehicle;
-  @Input({ required: true }) isFleetUpdating!: boolean;
-  @Output() isAddEditFleetConfirmed = new EventEmitter<boolean>();
+  @Input({ required: true }) isVehicleUpdating!: boolean;
+  @Output() isAddEditVehicleConfirmed = new EventEmitter<boolean>();
 
-  private fleetService = inject(VehiclesService)
+  private vehicleService = inject(VehiclesService)
   fuelTypes = Object.values(FuelType);
   modalForm: FormGroup;
   availableMakes: string[] = [];
@@ -61,7 +61,7 @@ export class AddEditVehicleModalComponent {
       if (typeof value.plateNumber === 'string') {
         this.modalForm.get('plateNumber')?.patchValue(value.plateNumber.toUpperCase(), { emitEvent: false });
       }
-      this.keepFleetUpdated(value)
+      this.keepVehicleUpdated(value)
     });
   }
 
@@ -86,7 +86,7 @@ export class AddEditVehicleModalComponent {
       this.fetchMakes();
   }
 
-  keepFleetUpdated(value: Vehicle) {
+  keepVehicleUpdated(value: Vehicle) {
     this.vehicle = {
       ...this.vehicle,
       ...value,
@@ -146,13 +146,13 @@ export class AddEditVehicleModalComponent {
   }
 
   onCancel() {
-    this.isAddEditFleetConfirmed.emit(false)
+    this.isAddEditVehicleConfirmed.emit(false)
   }
 
   onSubmit() {
     if (this.modalForm.valid) {
-      this.fleetService.addOrUpdateFleet(this.vehicle)
-      this.isAddEditFleetConfirmed.emit(true);
+      this.vehicleService.addOrUpdateVehicle(this.vehicle)
+      this.isAddEditVehicleConfirmed.emit(true);
     } else {
       this.modalForm.markAllAsTouched();
     }

@@ -1,0 +1,24 @@
+<div class="fleets-page-wrapper">
+    <div class="actions">
+      <div class="search-wrapper">
+        <input
+          id="filter-text-box"
+          (input)="inputListener()"
+          class="search"
+          type="text"
+          placeholder="Search"
+        />
+      </div>
+    </div>
+  
+    <ag-grid-angular
+      [rowData]="history"
+      [columnDefs]="historyColumns"
+      [rowSelection]="'single'"
+      class="ag-theme-quartz"
+      style="height: 600px"
+      (gridReady)="onGridReady($event)"
+      (rowClicked)="onRowClicked()"
+    />
+  </div>
+  

@@ -50,7 +50,7 @@ import { DrivingLicenseCategoriesComponent } from "../driving-license-categories
 export class AddEditEmployeeModalComponent {
   @Input({ required: true }) employee!: Employee;
   @Input({ required: true }) isEmployeeUpdating!: boolean;
-  @Output() isAddEditFleetConfirmed = new EventEmitter<boolean>();
+  @Output() isAddEditEmployeeConfirmed = new EventEmitter<boolean>();
 
   private employeeService = inject(EmployeesService);
   modalForm: FormGroup;
@@ -104,13 +104,13 @@ export class AddEditEmployeeModalComponent {
   }
 
   onCancel() {
-    this.isAddEditFleetConfirmed.emit(false);
+    this.isAddEditEmployeeConfirmed.emit(false);
   }
 
   onSubmit() {
     if (this.modalForm.valid) {
       this.employeeService.addOrUpdateEmployee(this.employee);
-      this.isAddEditFleetConfirmed.emit(true);
+      this.isAddEditEmployeeConfirmed.emit(true);
     } else {
       this.modalForm.markAllAsTouched();
     }
