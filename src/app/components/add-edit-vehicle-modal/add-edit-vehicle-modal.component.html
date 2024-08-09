@@ -1,7 +1,7 @@
 <div (click)="onCancel()" class="backdrop"></div>
 <dialog open>
   <h2 class="modal-title">
-    {{ isFleetUpdating ? "Edit " + vehicle.plateNumber : "Add Fleet" }}
+    {{ isVehicleUpdating ? "Edit " + vehicle.plateNumber : "Add Vehicle" }}
   </h2>
   <hr>
   <form [formGroup]="modalForm" (ngSubmit)="onSubmit()">
@@ -303,7 +303,7 @@
     <p class="actions">
       <button type="button" (click)="onCancel()">Cancel</button>
       <button type="submit">
-        {{ isFleetUpdating ? "Update" : "Add" }}
+        {{ isVehicleUpdating ? "Update" : "Add" }}
       </button>
     </p>
   </form>

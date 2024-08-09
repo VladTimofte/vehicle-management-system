@@ -16,7 +16,7 @@ import {
 } from 'ag-grid-community';
 import { DateTime } from 'luxon';
 
-import { VehiclesService } from '../../services/vehicles.service';
+import { VehiclesService } from '../../services/crud/vehicles.service';
 import { AddEditVehicleModalComponent } from '../../components/add-edit-vehicle-modal/add-edit-vehicle-modal.component';
 import { Vehicle } from 'src/app/models/vehicle.model';
 import { MakeIconClassName, emptyVehicleObj } from 'src/app/shared/vehicle';
@@ -38,31 +38,30 @@ import { documentExpired, documentExpiresWithinMonth } from 'src/app/utils/boole
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VehiclesComponent implements OnInit, OnDestroy {
-  public filteredFleets: Vehicle[] = [];
-  private fleetsSubscription: Subscription | undefined;
-  public searchTerm: string = '';
+  public vehicles: Vehicle[] = [];
+  private vehiclesSubscription: Subscription | undefined;
   private gridApi!: GridApi;
   public selectedRow: any;
 
   constructor(
-    private fleetsService: VehiclesService,
-    private addEditFleetService: AddEditVehicleFormService,
+    private vehiclesService: VehiclesService,
+    private addEditVehicleService: AddEditVehicleFormService,
     private dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
     // Subscribe to vehicles observable
-    this.fleetsSubscription = this.fleetsService
-      .getFleetsObservable()
+    this.vehiclesSubscription = this.vehiclesService
+      .getVehiclesObservable()
       .subscribe((vehicles) => {
-        this.updateFilteredFleets(vehicles);
+        this.updateGrid(vehicles)
       });
   }
 
   ngOnDestroy(): void {
     // Unsubscribe from vehicles observable to avoid memory leaks
-    if (this.fleetsSubscription) {
-      this.fleetsSubscription.unsubscribe();
+    if (this.vehiclesSubscription) {
+      this.vehiclesSubscription.unsubscribe();
     }
   }
 
@@ -70,7 +69,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
     this.gridApi = params.api;
   }
 
-  fleetsColumns: ColDef[] = [
+  vehilcesColumns: ColDef[] = [
     {
       field: 'icon',
       flex: 0.75,
@@ -81,18 +80,18 @@ export class VehiclesComponent implements OnInit, OnDestroy {
         return `<i class='${params.value}'></i>`;
       },
     },
-    { field: 'plateNumber', flex: 1.5, filter: false },
-    { field: 'make', flex: 2, filter: false },
-    { field: 'model', flex: 2, filter: false },
-    { field: 'manufactureYear', flex: 2, filter: false },
-    { field: 'vinNumber', flex: 2.2, filter: false },
-    { field: 'engineHorsePower', flex: 2, filter: false },
-    { field: 'engineCapacityCC', flex: 2, filter: false },
-    { field: 'fuelType', flex: 2, filter: false },
+    { field: 'plateNumber', flex: 1.5, filter: true },
+    { field: 'make', flex: 2, filter: true },
+    { field: 'model', flex: 2, filter: true },
+    { field: 'manufactureYear', flex: 2, filter: true },
+    { field: 'vinNumber', flex: 2.2, filter: true },
+    { field: 'engineHorsePower', flex: 2, filter: true },
+    { field: 'engineCapacityCC', flex: 2, filter: true },
+    { field: 'fuelType', flex: 2, filter: true },
     {
       field: 'expirationDateITP',
       flex: 2,
-      filter: false,
+      filter: true,
       cellRenderer: (params: { value: number }) => {
         return DateTime.fromMillis(params.value).toFormat('dd-MM-yyyy');
       },
@@ -108,7 +107,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
     {
       field: 'expirationDateRCA',
       flex: 2,
-      filter: false,
+      filter: true,
       cellRenderer: (params: { value: number }) => {
         return DateTime.fromMillis(params.value).toFormat('dd-MM-yyyy');
       },
@@ -123,11 +122,15 @@ export class VehiclesComponent implements OnInit, OnDestroy {
     },
   ];
 
-  private updateFilteredFleets(vehicles: Vehicle[]): void {
-    // Update filteredFleets based on current search term
-    this.filteredFleets = this.filterFleets(this.searchTerm, vehicles);
+  private updateGrid(data: Vehicle[]): void {
+    this.vehicles = data.map(el => {
+      return {
+        ...el,
+        icon: this.getIconClassName(el)
+      }
+    })
     if (this.gridApi) {
-      const rowData: any[] = [];
+      const rowData: Vehicle[] = [];
       this.gridApi.forEachNode(function (node) {
         rowData.push(node.data);
       });
@@ -135,72 +138,32 @@ export class VehiclesComponent implements OnInit, OnDestroy {
         remove: rowData,
       })!;
       this.gridApi.applyTransaction({
-        add: this.filteredFleets,
+        add: this.vehicles,
       })!;
     }
-  }
-
-  searchInputListener(value: string) {
-    // Update search term and filteredFleets
-    this.searchTerm = value;
-    this.filteredFleets = this.filterFleets(
-      value,
-      this.fleetsService.getFleets()
-    );
-  }
-
-  inputListener(value: string) {
-    // Handle input changes to update filteredFleets
-    if (!value?.length) {
-      this.filteredFleets = this.fleetsService.getFleets().map((vehicle) => ({
-        ...vehicle,
-        icon: this.getIconClassName(vehicle),
-      }));
-    }
-  }
-
-  private filterFleets(searchTerm: string, vehicles: Vehicle[]): Vehicle[] {
-    // Check if searchTerm is null, undefined, or an empty string
-    if (!searchTerm) {
-      return this.fleetsService.getFleets().map((vehicle) => ({
-        ...vehicle,
-        icon: this.getIconClassName(vehicle),
-      }));
-    }
-
-    // Filter vehicles based on search term
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    return vehicles
-      .filter((vehicle) =>
-        Object.keys(vehicle).some((key) => {
-          const propValue = vehicle[key as keyof typeof vehicle];
-          return (
-            key !== 'id' &&
-            propValue !== null &&
-            propValue.toString().toLowerCase().includes(lowerCaseSearchTerm)
-          );
-        })
-      )
-      .map((filteredFleet) => ({
-        ...filteredFleet,
-        icon: this.getIconClassName(filteredFleet),
-      }));
   }
 
   private getIconClassName(fl: Vehicle) {
     // Find icon class name based on vehicle make
     const formattedMake = fl.make.trim().toLowerCase();
-    const foundFleet = MakeIconClassName.find(
+    const foundVehicle = MakeIconClassName.find(
       (vehicle: any) => vehicle.make.toLowerCase() === formattedMake
     );
-    return foundFleet ? foundFleet.iconClassName : null;
+    return foundVehicle ? foundVehicle.iconClassName : null;
   }
 
-  addFleet() {
-    this.addEditFleetService
-      .openAddEditFleetForm({
+  inputListener() {
+    this.gridApi!.setGridOption(
+      "quickFilterText",
+      (document.getElementById("filter-text-box") as HTMLInputElement).value,
+    );
+  }
+
+  addVehicle() {
+    this.addEditVehicleService
+      .openAddEditVehicleForm({
         vehicle: emptyVehicleObj,
-        isFleetUpdating: false,
+        isVehicleUpdating: false,
       })
       .then((confirmed: any) => {
         if (confirmed) {
@@ -219,10 +182,10 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   }
 
   editRow() {
-    this.addEditFleetService
-      .openAddEditFleetForm({
+    this.addEditVehicleService
+      .openAddEditVehicleForm({
         vehicle: this.selectedRow[0],
-        isFleetUpdating: true,
+        isVehicleUpdating: true,
       })
       .then((confirmed: any) => {
         if (confirmed) {
@@ -242,7 +205,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
       })
       .then((confirmed: any) => {
         if (confirmed) {
-          this.fleetsService.removeFleet(selectedData.id);
+          this.vehiclesService.removeVehicle(selectedData.id);
         }
       });
       this.deselectRows();

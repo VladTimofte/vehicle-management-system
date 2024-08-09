@@ -5,11 +5,11 @@ import { documentExpired } from './booleans';
 
 export function constructExpiredDocsDialogData(
   employees: Employee[],
-  fleets: Vehicle[],
+  vehicles: Vehicle[],
   allocation: Allocation
 ) {
   const employee = employees.find((el) => el.id === allocation.employeeId);
-  const fleet = fleets.find((el) => el.id === allocation.vehicleId);
+  const vehicle = vehicles.find((el) => el.id === allocation.vehicleId);
 
   var data = {
     areDocsExpired: false,
@@ -26,15 +26,15 @@ export function constructExpiredDocsDialogData(
     data.expiredDocs.push('Expired Driving License');
   }
   if (
-    fleet?.expirationDateRCA !== undefined &&
-    documentExpired(fleet?.expirationDateRCA)
+    vehicle?.expirationDateRCA !== undefined &&
+    documentExpired(vehicle?.expirationDateRCA)
   ) {
     data.areDocsExpired = true;
     data.expiredDocs.push(' Expired Vehicle RCA');
   }
   if (
-    fleet?.expirationDateITP !== undefined &&
-    documentExpired(fleet?.expirationDateITP)
+    vehicle?.expirationDateITP !== undefined &&
+    documentExpired(vehicle?.expirationDateITP)
   ) {
     data.areDocsExpired = true;
     data.expiredDocs.push('Expired Vehicle ITP');
@@ -54,7 +54,7 @@ export function constructExpiredDocsDialogData(
       ' ' +
       employee?.lastName +
       ' to ' +
-      fleet?.plateNumber;
+      vehicle?.plateNumber;
   }
 
   return data || {};

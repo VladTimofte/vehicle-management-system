@@ -23,7 +23,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { DateTime } from 'luxon';
 
 import { Employee } from 'src/app/models/employee.model';
-import { EmployeesService } from 'src/app/services/employees.service';
+import { EmployeesService } from '@src/app/services/crud/employees.service';
 import { jobDepartments } from 'src/app/shared/employee';
 import { isCNPValid } from 'src/app/utils/strings';
 import { DrivingLicenseCategoriesComponent } from "../driving-license-categories/driving-license-categories.component";
@@ -50,7 +50,7 @@ import { DrivingLicenseCategoriesComponent } from "../driving-license-categories
 export class AddEditEmployeeModalComponent {
   @Input({ required: true }) employee!: Employee;
   @Input({ required: true }) isEmployeeUpdating!: boolean;
-  @Output() isAddEditFleetConfirmed = new EventEmitter<boolean>();
+  @Output() isAddEditEmployeeConfirmed = new EventEmitter<boolean>();
 
   private employeeService = inject(EmployeesService);
   modalForm: FormGroup;
@@ -104,13 +104,13 @@ export class AddEditEmployeeModalComponent {
   }
 
   onCancel() {
-    this.isAddEditFleetConfirmed.emit(false);
+    this.isAddEditEmployeeConfirmed.emit(false);
   }
 
   onSubmit() {
     if (this.modalForm.valid) {
       this.employeeService.addOrUpdateEmployee(this.employee);
-      this.isAddEditFleetConfirmed.emit(true);
+      this.isAddEditEmployeeConfirmed.emit(true);
     } else {
       this.modalForm.markAllAsTouched();
     }

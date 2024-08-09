@@ -1,5 +1,4 @@
-import { Component, ViewChild, Inject } from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +8,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '@auth0/auth0-angular';
 import { DOCUMENT } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AppAuthButtonComponent } from './components/app-auth-button/app-auth-button.component';
 import { LoginComponent } from "./pages/login/login.component";
@@ -27,15 +27,12 @@ import { LoginComponent } from "./pages/login/login.component";
         MatListModule,
         RouterOutlet,
         AppAuthButtonComponent,
-        LoginComponent
+        LoginComponent,
+        MatProgressSpinnerModule
     ]
 })
 export class AppComponent {
   title = 'FMS';
-  @ViewChild(MatSidenav)
-  sidenav!: MatSidenav;
-  isMobile = true;
-  isCollapsed = true;
 
   constructor(
     private router: Router,

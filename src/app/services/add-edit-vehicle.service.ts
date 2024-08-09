@@ -11,7 +11,7 @@ export class AddEditVehicleFormService {
     private environmentInjector: EnvironmentInjector
   ) {}
 
-  openAddEditFleetForm(data: { vehicle: Vehicle, isFleetUpdating: boolean }): Promise<boolean> {
+  openAddEditVehicleForm(data: { vehicle: Vehicle, isVehicleUpdating: boolean }): Promise<boolean> {
     if (this.isDialogOpen) {
       return Promise.resolve(false);
     }
@@ -20,9 +20,9 @@ export class AddEditVehicleFormService {
     return new Promise<boolean>((resolve) => {
       const componentRef = this.createComponent(AddEditVehicleModalComponent);
       componentRef.instance.vehicle = data.vehicle;
-      componentRef.instance.isFleetUpdating = data.isFleetUpdating;
+      componentRef.instance.isVehicleUpdating = data.isVehicleUpdating;
 
-      componentRef.instance.isAddEditFleetConfirmed.subscribe((result: boolean) => {
+      componentRef.instance.isAddEditVehicleConfirmed.subscribe((result: boolean) => {
         this.isDialogOpen = false;
         resolve(result);
         this.destroyComponent(componentRef);
