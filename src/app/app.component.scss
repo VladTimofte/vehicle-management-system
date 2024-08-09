@@ -6,6 +6,15 @@ h1 {
 
 h2 {padding: 1rem;}
 
+.mat-spinner-wrapper {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
 .main-content-wrapper {
     display: grid;
     grid-template-columns: auto auto;

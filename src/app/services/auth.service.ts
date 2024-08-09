@@ -1,38 +1,35 @@
 import { Injectable } from '@angular/core';
-import { AuthService as Auth0Service } from '@auth0/auth0-angular';
+import { AuthService as Auth0Service, User } from '@auth0/auth0-angular';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { filter, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.getStoredAuthState());
-  isAuthenticated$: Observable<boolean> = this.isAuthenticatedSubject.asObservable();
+  isAuthenticated$!: Observable<boolean>;
+  private userProfileSubject = new BehaviorSubject<User | null>(null);
 
-  constructor(private auth0: Auth0Service) {
-    this.auth0.isAuthenticated$.subscribe(isAuthenticated => {
-      this.isAuthenticatedSubject.next(isAuthenticated);
-      this.storeAuthState(isAuthenticated);
-    });
-  }
+  constructor(private auth0: Auth0Service){
+    this.isAuthenticated$ = this.auth0.isAuthenticated$;
 
-  private getStoredAuthState(): boolean {
-    // Verifică dacă există starea în storage
-    return JSON.parse(localStorage.getItem('isAuthenticated') || 'false');
-  }
-
-  private storeAuthState(isAuthenticated: boolean): void {
-    // Salvează starea în storage
-    localStorage.setItem('isAuthenticated', JSON.stringify(isAuthenticated));
+    this.auth0.user$.pipe(
+      filter((profile): profile is User | null => profile !== undefined), // Filter out undefined values
+      tap(profile => {
+        this.userProfileSubject.next(profile);
+      })
+    ).subscribe();
   }
 
   loginWithRedirect() {
     this.auth0.loginWithRedirect();
-    this.storeAuthState(true);
   }
 
   logout(options: { logoutParams: { returnTo: string } }) {
     this.auth0.logout(options);
-    this.storeAuthState(false);
+  }
+
+  getUserProfile(): User | null {
+    return this.userProfileSubject.getValue();
   }
 }

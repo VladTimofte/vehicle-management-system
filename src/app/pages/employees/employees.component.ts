@@ -188,7 +188,10 @@ export class EmployeesComponent implements OnInit, OnDestroy {
           employeeId: this.selectedRow[0].id,
           vehicleId: '',
           startDate: 0,
-          endDate: 0
+          endDate: 0,
+          startLocation: {},
+          endLocation: {},
+          distance: 0
         },
         isAllocationUpdating: false,
       })

@@ -133,6 +133,113 @@
         </div>
       </div>
 
+      <div class="row">
+        <div class="form-item">
+          <div class="label-wrapper">
+            <label for="startLocation">Start Location</label>
+            <mat-spinner
+              class="mat-spinner"
+              *ngIf="isStartLocationsLoading"
+              style="width: 18px; height: 18px"
+            ></mat-spinner>
+            <mat-icon *ngIf="!isStartLocationsLoading">done</mat-icon>
+          </div>
+          <input
+            id="startLocationInput"
+            formControlName="startLocationInput"
+            type="text"
+            (input)="onQueryChanged($event, 'start')"
+            placeholder="Search location..."
+          />
+          <br />
+          <select
+            id="startLocation"
+            formControlName="startLocation"
+            (change)="onLocationSelected()"
+            [ngClass]="{ 'pointer-events-none': isStartLocationsLoading }"
+          >
+            <option *ngIf="isStartLocationsLoading" value="">
+              First search a location
+            </option>
+            <option *ngIf="!isStartLocationsLoading" value="">
+              Select a location
+            </option>
+            <option
+              *ngFor="let location of startLocations"
+              [ngValue]="location"
+            >
+              {{ location.display_name }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              modalForm.get('startLocation')?.invalid &&
+              modalForm.get('startLocation')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('startLocation')?.hasError('required')"
+            >
+              Start Location is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-item">
+          <div class="label-wrapper">
+            <label for="endLocation">End Location</label>
+            <mat-spinner
+              class="mat-spinner"
+              *ngIf="isEndLocationsLoading"
+              style="width: 18px; height: 18px"
+            ></mat-spinner>
+            <mat-icon *ngIf="!isEndLocationsLoading">done</mat-icon>
+          </div>
+          <input
+            type="text"
+            id="endLocationInput"
+            formControlName="endLocationInput"
+            (input)="onQueryChanged($event, 'end')"
+            placeholder="Search location..."
+          />
+          <br />
+          <select
+            id="endLocation"
+            formControlName="endLocation"
+            (change)="onLocationSelected()"
+            [ngClass]="{ 'pointer-events-none': isEndLocationsLoading }"
+          >
+            <option *ngIf="isEndLocationsLoading" value="">
+              First search a location
+            </option>
+            <option *ngIf="!isEndLocationsLoading" value="">
+              Select a location
+            </option>
+            <option *ngFor="let location of endLocations" [ngValue]="location">
+              {{ location.display_name }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              modalForm.get('endLocation')?.invalid &&
+              modalForm.get('endLocation')?.touched
+            "
+          >
+            <small
+              class="error-message"
+              *ngIf="modalForm.get('endLocation')?.hasError('required')"
+            >
+              End Location is required.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <p *ngIf="distance">
+        Estimated Distance: {{ distance | number : "1.2-2" }} km
+      </p>
+
       <br />
     </div>
 

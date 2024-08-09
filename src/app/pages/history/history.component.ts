@@ -19,6 +19,7 @@ import { DateTime } from 'luxon';
 import { HistoryService } from '../../services/crud/history.service';
 import { AddEditVehicleModalComponent } from '../../components/add-edit-vehicle-modal/add-edit-vehicle-modal.component';
 import { History } from 'src/app/models/history.model';
+import { formatActionString, formatEntityString } from '@src/app/utils/strings';
 
 @Component({
   selector: 'app-history',
@@ -39,16 +40,14 @@ export class HistoryComponent implements OnInit, OnDestroy {
   private gridApi!: GridApi;
   public selectedRow: any;
 
-  constructor(
-    private historyService: HistoryService,
-  ) {}
+  constructor(private historyService: HistoryService) {}
 
   ngOnInit(): void {
     // Subscribe to history observable
     this.historySubscription = this.historyService
       .getHistoryObservable()
       .subscribe((history) => {
-        this.updateGrid(history)
+        this.updateGrid(history);
       });
   }
 
@@ -65,13 +64,43 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   historyColumns: ColDef[] = [
     { field: 'user', headerName: 'User (Who?)', flex: 2, filter: true },
-    { field: 'action', headerName: 'Action (what?)', flex: 2, filter: true },
-    { field: 'entity', headerName: 'Entity', flex: 2, filter: true },
-    { field: 'resource', headerName: 'Resource', flex: 2, filter: true },
+    {
+      field: 'action',
+      headerName: 'Action (what?)',
+      flex: 2,
+      filter: true,
+      cellRenderer: (params: { value: string }) => {
+        return formatActionString(params.value);
+      },
+    },
+    {
+      field: 'entity',
+      headerName: 'Entity',
+      flex: 2,
+      filter: true,
+      cellRenderer: (params: { value: string }) => {
+        return formatEntityString(params.value);
+      },
+    },
+    {
+      field: 'resource',
+      headerName: 'Resource',
+      flex: 4,
+      filter: true,
+    },
+    {
+      field: 'date',
+      headerName: 'Date (When?)',
+      flex: 2,
+      filter: true,
+      cellRenderer: (params: { value: number }) => {
+        return DateTime.fromMillis(params.value).toFormat('dd-MM-yyyy | HH:mm');
+      },
+    },
   ];
 
   private updateGrid(data: History[]): void {
-    this.history = data
+    this.history = data;
     if (this.gridApi) {
       const rowData: History[] = [];
       this.gridApi.forEachNode(function (node) {
@@ -88,18 +117,13 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   inputListener() {
     this.gridApi!.setGridOption(
-      "quickFilterText",
-      (document.getElementById("filter-text-box") as HTMLInputElement).value,
+      'quickFilterText',
+      (document.getElementById('filter-text-box') as HTMLInputElement).value
     );
-  }
-
-  onRowClicked() {
-    this.selectedRow = this.gridApi.getSelectedRows();
   }
 
   deselectRows() {
     this.selectedRow = undefined;
     this.gridApi.deselectAll();
   }
-
 }

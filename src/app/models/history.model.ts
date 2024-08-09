@@ -4,4 +4,5 @@ export interface History {
     action: string;
     entity: string;
     resource: string;
+    date: number;
   }

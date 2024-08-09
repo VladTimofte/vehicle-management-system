@@ -1,13 +1,17 @@
 import { HasId, IStorageService } from '@src/app/models/common';
+import { inject } from '@angular/core';
+import { History } from '@src/app/models/history.model';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import { HistoryService } from '../crud/history.service';
 
 export class LocalStorageService<T extends HasId>
   implements IStorageService<T>
 {
   public key!: string;
-  protected items: T[] = []; // Can be used mockData
+  protected items: T[] = [];
   private itemsSubject = new BehaviorSubject<T[]>([]);
+  // public historyService = inject(HistoryService)
 
   constructor() {
     this.loadItems();
@@ -32,6 +36,14 @@ export class LocalStorageService<T extends HasId>
     this.items = this.items.filter((i) => i.id !== id);
     this.itemsSubject.next([...this.items]);
     this.saveItems();
+    // this.historyService.addHistory({
+    //   id: uuidv4(),
+    //   user: 'USER',
+    //   action: 'delete',
+    //   entity: 'ENTITY',
+    //   resource: 'RESOURCE',
+    //   date: 123123123123,
+    // })
   }
 
   addOrUpdateItem(item: T): void {
@@ -46,13 +58,13 @@ export class LocalStorageService<T extends HasId>
     this.saveItems();
   }
 
-  getItemsObservable():Observable<T[]> {
+  getItemsObservable(): Observable<T[]> {
     return this.itemsSubject.asObservable();
   }
 
   setKey(key: string): void {
     this.key = key;
-    this.loadItems()
+    this.loadItems();
   }
 
   private findIndexById(id: string): number {

@@ -22,12 +22,8 @@ export class HistoryService {
     return this.storageFactory.getItemsObservable();
   }
 
-  addOrUpdateHistory(history: History) {
+  addHistory(history: History) {
     this.storageFactory.addOrUpdateItem(history);
-  }
-
-  removeHistory(id: string) {
-    this.storageFactory.removeItem(id);
   }
 
   getHistory(): History[] {

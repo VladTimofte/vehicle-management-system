@@ -142,6 +142,36 @@ export class AllocationsComponent implements OnInit, OnDestroy {
         return DateTime.fromMillis(params.value).toFormat('dd-MM-yyyy');
       },
     },
+    {
+      field: 'startLocation',
+      headerName: 'Start Location',
+      flex: 2,
+      filter: false,
+      cellRenderer: (params: any) => {
+        return params?.value?.display_name;
+      },
+    },
+    {
+      field: 'endLocation',
+      headerName: 'End Location',
+      flex: 2,
+      filter: false,
+      cellRenderer: (params: any) => {
+        return params?.value?.display_name;
+      },
+    },
+    {
+      field: 'distance',
+      headerName: 'Estimated Distance',
+      flex: 2,
+      filter: false,
+      cellRenderer: (params: any) => {
+        if (params?.value != null && !isNaN(params.value)) {
+          return parseFloat(params.value).toFixed(2);
+        }
+        return '-';
+      },
+    },
   ];
 
   private updateFilteredAllocations(allocations: Allocation[]): void {

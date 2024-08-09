@@ -6,4 +6,7 @@ export const emptyAllocationObj: Allocation = {
     vehicleId: '',
     startDate: 0,
     endDate: 0,
+    startLocation: {},
+    endLocation: {},
+    distance: 0
   };
