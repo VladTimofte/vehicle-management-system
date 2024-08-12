@@ -48,4 +48,8 @@ export class AppComponent {
     const url = this.router.url;
     return !url.includes('track');
   }
+
+  isAccessDeniedRoute(): boolean {
+    return this.router.url === '/access-denied';
+  }
 }

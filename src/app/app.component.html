@@ -6,63 +6,67 @@
 
 <ng-template #loaded>
   <ng-container *ngIf="auth.isAuthenticated$ | async;">
-    <div class="mat-toolbar">
-      <div class="menu-bar-left-element">
-        <div class="menu-header-logo-txt">
-          <img
-            src="assets/GlobalLogo_NTTDATA_White.png"
-            alt="Ntt Data"
-            width="150px"
-          />
-          <h3 class="menu-nav-title">|&nbsp;&nbsp;Vehicle Management System</h3>
+    <!-- Meniu si header doar pentru rutele din MainLayoutComponent -->
+    <ng-container *ngIf="!isAccessDeniedRoute(); else noLayout">
+      <div class="mat-toolbar">
+        <div class="menu-bar-left-element">
+          <div class="menu-header-logo-txt">
+            <img src="assets/GlobalLogo_NTTDATA_White.png" alt="Ntt Data" width="150px" />
+            <h3 class="menu-nav-title">|&nbsp;&nbsp;Vehicle Management System</h3>
+          </div>
+        </div>
+        <div class="menu-bar-right-element">
+          <div class="user-actions-wrapper">
+            <mat-icon class="low-scale">notifications</mat-icon>
+            <app-auth-button></app-auth-button>
+          </div>
         </div>
       </div>
-      <div class="menu-bar-right-element">
-        <div class="user-actions-wrapper">
-          <mat-icon class="low-scale">notifications</mat-icon>
-          <app-auth-button />
-        </div>
-      </div>
-    </div>
 
-    <div class="main-content-wrapper">
-      <div class="left-content">
-        <div>
-          <a mat-list-item (click)="navigateTo('')">
-            <span class="entry">
-              <mat-icon class="low-scale">house</mat-icon>
-            </span>
-          </a>
-          <a mat-list-item (click)="navigateTo('vehicles')">
-            <span class="entry">
-              <mat-icon class="low-scale">drive_eta</mat-icon>
-            </span>
-          </a>
-          <a mat-list-item (click)="navigateTo('employees')">
-            <span class="entry">
-              <mat-icon class="low-scale">people</mat-icon>
-            </span>
-          </a>
-          <a mat-list-item (click)="navigateTo('allocations')">
-            <span class="entry">
-              <mat-icon class="low-scale">timeline</mat-icon>
-            </span>
-          </a>
-          <a mat-list-item (click)="navigateTo('history')">
-            <span class="entry">
-              <mat-icon class="low-scale">history</mat-icon>
-            </span>
-          </a>
+      <div class="main-content-wrapper">
+        <div class="left-content">
+          <div>
+            <a mat-list-item (click)="navigateTo('')">
+              <span class="entry">
+                <mat-icon class="low-scale">house</mat-icon>
+              </span>
+            </a>
+            <a mat-list-item (click)="navigateTo('vehicles')">
+              <span class="entry">
+                <mat-icon class="low-scale">drive_eta</mat-icon>
+              </span>
+            </a>
+            <a mat-list-item (click)="navigateTo('employees')">
+              <span class="entry">
+                <mat-icon class="low-scale">people</mat-icon>
+              </span>
+            </a>
+            <a mat-list-item (click)="navigateTo('allocations')">
+              <span class="entry">
+                <mat-icon class="low-scale">timeline</mat-icon>
+              </span>
+            </a>
+            <a mat-list-item (click)="navigateTo('history')">
+              <span class="entry">
+                <mat-icon class="low-scale">history</mat-icon>
+              </span>
+            </a>
+          </div>
+        </div>
+        <div class="right-content">
+          <div *ngIf="conditionalDisplayActionBar()" class="actions-bar-wrapper">
+            <mat-icon class="low-scale">picture_as_pdf</mat-icon>
+            <mat-icon class="low-scale">person_add_alt</mat-icon>
+            <mat-icon class="low-scale">mail</mat-icon>
+          </div>
+          <router-outlet></router-outlet>
         </div>
       </div>
-      <div class="right-content">
-        <div *ngIf="conditionalDisplayActionBar()" class="actions-bar-wrapper">
-          <mat-icon class="low-scale">picture_as_pdf</mat-icon>
-          <mat-icon class="low-scale">person_add_alt</mat-icon>
-          <mat-icon class="low-scale">mail</mat-icon>
-        </div>
-        <router-outlet></router-outlet>
-      </div>
-    </div>
+    </ng-container>
+
+    <!-- Layout fără meniu pentru Access Denied -->
+    <ng-template #noLayout>
+      <router-outlet></router-outlet>
+    </ng-template>
   </ng-container>
 </ng-template>
