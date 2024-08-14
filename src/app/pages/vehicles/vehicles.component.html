@@ -12,18 +12,24 @@
         class="rlow-scale"
         [ngClass]="{ disabled: selectedRow == null }"
         (click)="onRemoveSelected()"
+        *ngIf="hasAccess('write:vehicles')"
       >
         <mat-icon>delete_outline</mat-icon>
       </button>
       <button
+        *ngIf="hasAccess('write:vehicles')"
         class="low-scale"
         [ngClass]="{ disabled: selectedRow == null }"
         (click)="editRow()"
       >
-      <mat-icon>edit</mat-icon>
+        <mat-icon>edit</mat-icon>
       </button>
     </div>
-    <button class="add-vehicle-wrapper" (click)="addVehicle()">
+    <button
+      *ngIf="hasAccess('write:vehicles')"
+      class="add-vehicle-wrapper"
+      (click)="addVehicle()"
+    >
       <mat-icon>control_point</mat-icon>Add Vehicle
     </button>
   </div>
