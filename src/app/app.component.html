@@ -31,22 +31,22 @@
                 <mat-icon class="low-scale">house</mat-icon>
               </span>
             </a>
-            <a mat-list-item (click)="navigateTo('vehicles')">
+            <a *ngIf="hasAccess('read:vehicles')" mat-list-item (click)="navigateTo('vehicles')">
               <span class="entry">
                 <mat-icon class="low-scale">drive_eta</mat-icon>
               </span>
             </a>
-            <a mat-list-item (click)="navigateTo('employees')">
+            <a *ngIf="hasAccess('read:employees')" mat-list-item (click)="navigateTo('employees')">
               <span class="entry">
                 <mat-icon class="low-scale">people</mat-icon>
               </span>
             </a>
-            <a mat-list-item (click)="navigateTo('allocations')">
+            <a *ngIf="hasAccess('read:allocations')" mat-list-item (click)="navigateTo('allocations')">
               <span class="entry">
                 <mat-icon class="low-scale">timeline</mat-icon>
               </span>
             </a>
-            <a mat-list-item (click)="navigateTo('history')">
+            <a *ngIf="hasAccess('read:history')" mat-list-item (click)="navigateTo('history')">
               <span class="entry">
                 <mat-icon class="low-scale">history</mat-icon>
               </span>

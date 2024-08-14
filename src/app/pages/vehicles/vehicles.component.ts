@@ -23,6 +23,7 @@ import { MakeIconClassName, emptyVehicleObj } from 'src/app/shared/vehicle';
 import { AddEditVehicleFormService } from 'src/app/services/add-edit-vehicle.service';
 import { DialogService } from 'src/app/services/dialog.service';
 import { documentExpired, documentExpiresWithinMonth } from 'src/app/utils/booleans';
+import { PermissionService } from '@src/app/services/permissions.service';
 
 @Component({
   selector: 'app-vehicles',
@@ -46,7 +47,8 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   constructor(
     private vehiclesService: VehiclesService,
     private addEditVehicleService: AddEditVehicleFormService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private permissionService: PermissionService
   ) {}
 
   ngOnInit(): void {
@@ -160,6 +162,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   }
 
   addVehicle() {
+    if (this.hasAccess('write:vehicles')) {
     this.addEditVehicleService
       .openAddEditVehicleForm({
         vehicle: emptyVehicleObj,
@@ -170,6 +173,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
           console.log('Vehicle added'); // Todo: create a confirm message UI
         }
       });
+    }
   }
 
   onRowClicked() {
@@ -182,6 +186,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   }
 
   editRow() {
+    if (this.hasAccess('write:vehicles')) {
     this.addEditVehicleService
       .openAddEditVehicleForm({
         vehicle: this.selectedRow[0],
@@ -193,9 +198,11 @@ export class VehiclesComponent implements OnInit, OnDestroy {
         }
       });
       this.deselectRows();
+    } // Todo: create n error message UI else statement
   }
 
   onRemoveSelected() {
+    if (this.hasAccess('write:vehicles')) {
     const selectedData = this.gridApi.getSelectedRows()[0];
     this.dialogService
       .openConfirmDialog({
@@ -209,5 +216,10 @@ export class VehiclesComponent implements OnInit, OnDestroy {
         }
       });
       this.deselectRows();
+    } // Todo: create n error message UI else statement
   }
+
+  hasAccess(permission: string): boolean {
+    return this.permissionService.hasAccess(permission)
+   }
 }

@@ -1,43 +1,48 @@
 <div class="fleets-page-wrapper">
-    <div class="actions">
-      <div class="search-wrapper">
-        <input
-          #searchInput
-          (keydown.enter)="searchInputListener(searchInput.value)"
-          (input)="inputListener(searchInput.value)"
-          class="search"
-          type="text"
-          placeholder="Search"
-        />
-        <button (click)="searchInputListener(searchInput.value)">Search</button>
-        <button
-          class="low-scale"
-          [ngClass]="{ disabled: selectedRow === undefined }"
-          (click)="onRemoveSelected()"
-        >
-          <mat-icon>delete_outline</mat-icon>
-        </button>
-        <button
-          class="low-scale"
-          [ngClass]="{ disabled: selectedRow === undefined }"
-          (click)="editRow()"
-        >
+  <div class="actions">
+    <div class="search-wrapper">
+      <input
+        #searchInput
+        (keydown.enter)="searchInputListener(searchInput.value)"
+        (input)="inputListener(searchInput.value)"
+        class="search"
+        type="text"
+        placeholder="Search"
+      />
+      <button (click)="searchInputListener(searchInput.value)">Search</button>
+      <button
+        *ngIf="hasAccess('write:allocations')"
+        class="low-scale"
+        [ngClass]="{ disabled: selectedRow === undefined }"
+        (click)="onRemoveSelected()"
+      >
+        <mat-icon>delete_outline</mat-icon>
+      </button>
+      <button
+        *ngIf="hasAccess('write:allocations')"
+        class="low-scale"
+        [ngClass]="{ disabled: selectedRow === undefined }"
+        (click)="editRow()"
+      >
         <mat-icon>edit</mat-icon>
-        </button>
-      </div>
-      <button class="add-allocation-wrapper" (click)="addAllocation()">
-        <mat-icon>control_point</mat-icon>Add Allocation
       </button>
     </div>
-  
-    <ag-grid-angular
-      [rowData]="filteredAllocations"
-      [columnDefs]="employeesColumns"
-      [rowSelection]="'single'"
-      class="ag-theme-quartz"
-      style="height: 600px"
-      (gridReady)="onGridReady($event)"
-      (rowClicked)="onRowClicked()"
-    />
+    <button
+      *ngIf="hasAccess('write:allocations')"
+      class="add-allocation-wrapper"
+      (click)="addAllocation()"
+    >
+      <mat-icon>control_point</mat-icon>Add Allocation
+    </button>
   </div>
-  
+
+  <ag-grid-angular
+    [rowData]="filteredAllocations"
+    [columnDefs]="employeesColumns"
+    [rowSelection]="'single'"
+    class="ag-theme-quartz"
+    style="height: 600px"
+    (gridReady)="onGridReady($event)"
+    (rowClicked)="onRowClicked()"
+  />
+</div>

@@ -15,7 +15,7 @@ import {
   GridReadyEvent,
   GridApi,
   GridOptions,
-  RowClassParams
+  RowClassParams,
 } from 'ag-grid-community';
 
 import { AddEditVehicleModalComponent } from '../../components/add-edit-vehicle-modal/add-edit-vehicle-modal.component';
@@ -24,8 +24,12 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { EmployeesService } from '@src/app/services/crud/employees.service';
 import { Employee } from 'src/app/models/employee.model';
 import { emptyEmployeeObj } from 'src/app/shared/employee';
-import { documentExpired, documentExpiresWithinMonth } from 'src/app/utils/booleans';
+import {
+  documentExpired,
+  documentExpiresWithinMonth,
+} from 'src/app/utils/booleans';
 import { AddEditAllocationFormService } from 'src/app/services/add-edit-allocation.service';
+import { PermissionService } from '@src/app/services/permissions.service';
 
 @Component({
   selector: 'app-employees',
@@ -52,7 +56,8 @@ export class EmployeesComponent implements OnInit, OnDestroy {
     private employeeService: EmployeesService,
     private addEditEmployeeService: AddEditEmployeeFormService,
     private dialogService: DialogService,
-    private addEditAllocationFormService: AddEditAllocationFormService
+    private addEditAllocationFormService: AddEditAllocationFormService,
+    private permissionService: PermissionService
   ) {
     this.gridOptions = <GridOptions>{};
     this.gridOptions.getRowStyle = this.getRowStyle.bind(this);
@@ -63,7 +68,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
     this.EmployeesSubscription = this.employeeService
       .getEmployeesObservable()
       .subscribe((employees) => {
-        this.updateGrid(employees)
+        this.updateGrid(employees);
       });
   }
 
@@ -102,34 +107,37 @@ export class EmployeesComponent implements OnInit, OnDestroy {
         return params.value || '-';
       },
     },
-    { field: 'emergencyContactPhoneNumber',
+    {
+      field: 'emergencyContactPhoneNumber',
       flex: 2,
       filter: false,
-      cellRenderer: (params: { value: ICellRendererParams; }) => {
+      cellRenderer: (params: { value: ICellRendererParams }) => {
         return params.value || '-';
-      }, 
+      },
     },
   ];
 
   inputListener() {
     // Handle input changes
     this.gridApi!.setGridOption(
-      "quickFilterText",
-      (document.getElementById("filter-text-box") as HTMLInputElement).value,
+      'quickFilterText',
+      (document.getElementById('filter-text-box') as HTMLInputElement).value
     );
   }
 
   addEmployee() {
-    this.addEditEmployeeService
-      .openAddEditEmployeeForm({
-        employee: emptyEmployeeObj,
-        isEmployeeUpdating: false,
-      })
-      .then((confirmed) => {
-        if (confirmed) {
-          console.log('Employee added'); // Todo: create a confirm message UI
-        }
-      });
+    if (this.hasAccess('write:employees')) {
+      this.addEditEmployeeService
+        .openAddEditEmployeeForm({
+          employee: emptyEmployeeObj,
+          isEmployeeUpdating: false,
+        })
+        .then((confirmed) => {
+          if (confirmed) {
+            console.log('Employee added'); // Todo: create a confirm message UI
+          }
+        });
+    } // Todo: create n error message UI else statement
   }
 
   onRowClicked() {
@@ -142,33 +150,37 @@ export class EmployeesComponent implements OnInit, OnDestroy {
   }
 
   editRow() {
-    this.addEditEmployeeService
-      .openAddEditEmployeeForm({
-        employee: this.selectedRow[0],
-        isEmployeeUpdating: true,
-      })
-      .then((confirmed) => {
-        if (confirmed) {
-          console.log('Employee updated'); // Todo: create a confirm message UI
-        }
-      });
-      this.deselectRows()
+    if (this.hasAccess('write:employees')) {
+      this.addEditEmployeeService
+        .openAddEditEmployeeForm({
+          employee: this.selectedRow[0],
+          isEmployeeUpdating: true,
+        })
+        .then((confirmed) => {
+          if (confirmed) {
+            console.log('Employee updated'); // Todo: create a confirm message UI
+          }
+        });
+      this.deselectRows();
+    } // Todo: create n error message UI else statement
   }
 
   onRemoveSelected() {
-    const selectedData = this.gridApi.getSelectedRows()[0];
-    this.dialogService
-      .openConfirmDialog({
-        title: 'Confirm Deletion',
-        message: `Are you sure you want to delete: ${selectedData.firstName} ${selectedData.lastName}?`,
-        type: 'question'
-      })
-      .then((confirmed) => {
-        if (confirmed) {
-          this.employeeService.removeEmployee(selectedData.id);
-        }
-      });
-      this.deselectRows()
+    if (this.hasAccess('write:employees')) {
+      const selectedData = this.gridApi.getSelectedRows()[0];
+      this.dialogService
+        .openConfirmDialog({
+          title: 'Confirm Deletion',
+          message: `Are you sure you want to delete: ${selectedData.firstName} ${selectedData.lastName}?`,
+          type: 'question',
+        })
+        .then((confirmed) => {
+          if (confirmed) {
+            this.employeeService.removeEmployee(selectedData.id);
+          }
+        });
+      this.deselectRows();
+    } // Todo: create n error message UI else statement
   }
 
   getRowStyle(params: RowClassParams) {
@@ -181,26 +193,28 @@ export class EmployeesComponent implements OnInit, OnDestroy {
   }
 
   addAllocation() {
-    this.addEditAllocationFormService
-      .openAddEditAllocationForm({
-        allocation: {
-          id: '',
-          employeeId: this.selectedRow[0].id,
-          vehicleId: '',
-          startDate: 0,
-          endDate: 0,
-          startLocation: {},
-          endLocation: {},
-          distance: 0
-        },
-        isAllocationUpdating: false,
-      })
-      .then((confirmed) => {
-        if (confirmed) {
-          console.log('Allocation added'); // Todo: create a confirm message UI
-        }
-      });
-      this.deselectRows()
+    if (this.hasAccess('write:employees')) {
+      this.addEditAllocationFormService
+        .openAddEditAllocationForm({
+          allocation: {
+            id: '',
+            employeeId: this.selectedRow[0].id,
+            vehicleId: '',
+            startDate: 0,
+            endDate: 0,
+            startLocation: {},
+            endLocation: {},
+            distance: 0,
+          },
+          isAllocationUpdating: false,
+        })
+        .then((confirmed) => {
+          if (confirmed) {
+            console.log('Allocation added'); // Todo: create a confirm message UI
+          }
+        });
+      this.deselectRows();
+    } // Todo: create n error message UI else statement
   }
 
   private updateGrid(data: Employee[]): void {
@@ -219,4 +233,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
     }
   }
 
+  hasAccess(permission: string): boolean {
+    return this.permissionService.hasAccess(permission);
+  }
 }

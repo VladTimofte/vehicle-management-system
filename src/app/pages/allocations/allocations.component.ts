@@ -21,6 +21,7 @@ import { EmployeesService } from '@src/app/services/crud/employees.service';
 import { VehiclesService } from '@src/app/services/crud/vehicles.service';
 import { Employee } from 'src/app/models/employee.model';
 import { Vehicle } from 'src/app/models/vehicle.model';
+import { PermissionService } from '@src/app/services/permissions.service';
 
 @Component({
   selector: 'app-allocations',
@@ -51,7 +52,8 @@ export class AllocationsComponent implements OnInit, OnDestroy {
     private addEditAllocationFormService: AddEditAllocationFormService,
     private dialogService: DialogService,
     private employeesService: EmployeesService,
-    private vehiclesService: VehiclesService
+    private vehiclesService: VehiclesService,
+    private permissionService: PermissionService
   ) {
     this.vehicles = this.vehiclesService.getVehicles();
     this.employees = this.employeesService.getEmployees();
@@ -64,17 +66,17 @@ export class AllocationsComponent implements OnInit, OnDestroy {
       .subscribe((allocations) => {
         this.updateFilteredAllocations(allocations);
       });
-      // Subscribe to Vehicles observable
-      this.VehiclesSubscription = this.vehiclesService
+    // Subscribe to Vehicles observable
+    this.VehiclesSubscription = this.vehiclesService
       .getVehiclesObservable()
       .subscribe((vehicles) => {
-        this.vehicles = vehicles
+        this.vehicles = vehicles;
       });
-      // Subscribe to EmployeesSubscription observable
-      this.EmployeesSubscription = this.employeesService
+    // Subscribe to EmployeesSubscription observable
+    this.EmployeesSubscription = this.employeesService
       .getEmployeesObservable()
       .subscribe((employee) => {
-        this.employees = employee
+        this.employees = employee;
       });
   }
 
@@ -107,7 +109,9 @@ export class AllocationsComponent implements OnInit, OnDestroy {
         var foundEmployee = this.employeesService
           .getEmployees()
           .find((el) => el.id === params.value);
-          return foundEmployee ? foundEmployee?.firstName + ' ' + foundEmployee?.lastName : 'Deleted Employee' 
+        return foundEmployee
+          ? foundEmployee?.firstName + ' ' + foundEmployee?.lastName
+          : 'Deleted Employee';
       },
     },
     {
@@ -117,13 +121,13 @@ export class AllocationsComponent implements OnInit, OnDestroy {
       filter: false,
       cellRenderer: (params: { value: string }) => {
         var foundVehicle = this.vehicles.find((el) => el.id === params.value);
-        return foundVehicle ? 
-          foundVehicle?.make +
-          ' ' +
-          foundVehicle?.model +
-          ' - ' +
-          foundVehicle?.plateNumber
-        : 'Deleted Vehicle'
+        return foundVehicle
+          ? foundVehicle?.make +
+              ' ' +
+              foundVehicle?.model +
+              ' - ' +
+              foundVehicle?.plateNumber
+          : 'Deleted Vehicle';
       },
     },
     {
@@ -218,26 +222,27 @@ export class AllocationsComponent implements OnInit, OnDestroy {
     if (!searchTerm) {
       return this.allocationsService.getAllocations();
     }
-  
+
     // Convert search term to lower case
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
-  
+
     return allocations.filter((allocation) => {
       // Check if any property of the allocation matches the search term
       return Object.keys(allocation).some((key) => {
         const propValue = allocation[key as keyof typeof allocation];
-  
+
         if (key === 'employeeId') {
           // Find employee by ID
-          const employee = this.employees.find(e => e.id === propValue);
+          const employee = this.employees.find((e) => e.id === propValue);
           if (employee) {
-            const fullName = `${employee.firstName} ${employee.lastName}`.toLowerCase();
+            const fullName =
+              `${employee.firstName} ${employee.lastName}`.toLowerCase();
             return fullName.includes(lowerCaseSearchTerm);
           }
           return false;
         } else if (key === 'vehicleId') {
           // Find vehicle by ID
-          const vehicle = this.vehicles.find(f => f.id === propValue);
+          const vehicle = this.vehicles.find((f) => f.id === propValue);
           if (vehicle) {
             return (
               vehicle.make.toLowerCase().includes(lowerCaseSearchTerm) ||
@@ -248,7 +253,9 @@ export class AllocationsComponent implements OnInit, OnDestroy {
           return false;
         } else if (key === 'startDate' || key === 'endDate') {
           // Format date and check
-          const formattedDate = DateTime.fromMillis(propValue as number).toFormat('dd-MM-yyyy');
+          const formattedDate = DateTime.fromMillis(
+            propValue as number
+          ).toFormat('dd-MM-yyyy');
           return formattedDate.includes(lowerCaseSearchTerm);
         } else {
           // General case for other properties
@@ -263,16 +270,18 @@ export class AllocationsComponent implements OnInit, OnDestroy {
   }
 
   addAllocation() {
-    this.addEditAllocationFormService
-      .openAddEditAllocationForm({
-        allocation: emptyAllocationObj,
-        isAllocationUpdating: false,
-      })
-      .then((confirmed) => {
-        if (confirmed) {
-          console.log('Allocation added'); // Todo: create a confirm message UI
-        }
-      });
+    if (this.hasAccess('write:allocations')) {
+      this.addEditAllocationFormService
+        .openAddEditAllocationForm({
+          allocation: emptyAllocationObj,
+          isAllocationUpdating: false,
+        })
+        .then((confirmed) => {
+          if (confirmed) {
+            console.log('Allocation added'); // Todo: create a confirm message UI
+          }
+        });
+    } // Todo: create n error message UI else statement
   }
 
   onRowClicked() {
@@ -285,41 +294,49 @@ export class AllocationsComponent implements OnInit, OnDestroy {
   }
 
   editRow() {
-    this.addEditAllocationFormService
-      .openAddEditAllocationForm({
-        allocation: this.selectedRow[0],
-        isAllocationUpdating: true,
-      })
-      .then((confirmed) => {
-        if (confirmed) {
-          console.log('Allocation updated'); // Todo: create a confirm message UI
-        }
-      });
-      this.deselectRows()
+    if (this.hasAccess('write:allocations')) {
+      this.addEditAllocationFormService
+        .openAddEditAllocationForm({
+          allocation: this.selectedRow[0],
+          isAllocationUpdating: true,
+        })
+        .then((confirmed) => {
+          if (confirmed) {
+            console.log('Allocation updated'); // Todo: create a confirm message UI
+          }
+        });
+      this.deselectRows();
+    } // Todo: create n error message UI else statement
   }
 
   onRemoveSelected() {
-    const selectedData = this.gridApi.getSelectedRows()[0];
-    const assignedEmployee = this.employees.find(
-      (el) => el.id === selectedData?.employeeId
-    );
-    const assignedVehicle = this.vehicles.find(
-      (el) => el.id === selectedData?.vehicleId
-    );
-    this.dialogService
-      .openConfirmDialog({
-        title: 'Confirm Deletion',
-        message: `Are you sure you want to unassign: 
+    if (this.hasAccess('write:allocations')) {
+      const selectedData = this.gridApi.getSelectedRows()[0];
+      const assignedEmployee = this.employees.find(
+        (el) => el.id === selectedData?.employeeId
+      );
+      const assignedVehicle = this.vehicles.find(
+        (el) => el.id === selectedData?.vehicleId
+      );
+      this.dialogService
+        .openConfirmDialog({
+          title: 'Confirm Deletion',
+          message: `Are you sure you want to unassign: 
         ${assignedEmployee?.firstName} ${assignedEmployee?.lastName} from 
         ${assignedVehicle?.make} ${assignedVehicle?.model} - 
         ${assignedVehicle?.plateNumber}?`,
-        type: 'question',
-      })
-      .then((confirmed) => {
-        if (confirmed) {
-          this.allocationsService.removeAllocation(selectedData.id);
-        }
-      });
-      this.deselectRows()
+          type: 'question',
+        })
+        .then((confirmed) => {
+          if (confirmed) {
+            this.allocationsService.removeAllocation(selectedData.id);
+          }
+        });
+      this.deselectRows();
+    } // Todo: create n error message UI else statement
+  }
+
+  hasAccess(permission: string): boolean {
+    return this.permissionService.hasAccess(permission);
   }
 }

@@ -12,6 +12,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AppAuthButtonComponent } from './components/app-auth-button/app-auth-button.component';
 import { LoginComponent } from "./pages/login/login.component";
+import { PermissionService } from './services/permissions.service';
+import { Observable, tap, catchError, of } from 'rxjs';
 
 @Component({
     selector: 'app-root',
@@ -31,13 +33,12 @@ import { LoginComponent } from "./pages/login/login.component";
         MatProgressSpinnerModule
     ]
 })
-export class AppComponent {
-  title = 'FMS';
-
+export class AppComponent  {
   constructor(
     private router: Router,
     @Inject(DOCUMENT) public document: Document,
-    public auth: AuthService
+    public auth: AuthService,
+    private permissionService: PermissionService
   ) {}
 
   navigateTo(route: string): void {
@@ -52,4 +53,9 @@ export class AppComponent {
   isAccessDeniedRoute(): boolean {
     return this.router.url === '/access-denied';
   }
+
+  hasAccess(permission: string): boolean {
+   return this.permissionService.hasAccess(permission)
+  }
+  
 }

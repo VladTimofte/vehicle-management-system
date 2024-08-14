@@ -9,6 +9,7 @@
         placeholder="Search"
       />
       <button
+        *ngIf="hasAccess('write:employees')"
         class="rlow-scale"
         [ngClass]="{ disabled: selectedRow == null }"
         (click)="onRemoveSelected()"
@@ -16,6 +17,7 @@
         <mat-icon>delete_outline</mat-icon>
       </button>
       <button
+        *ngIf="hasAccess('write:employees')"
         class="low-scale"
         [ngClass]="{ disabled: selectedRow == null }"
         (click)="editRow()"
@@ -23,6 +25,7 @@
         <mat-icon>edit</mat-icon>
       </button>
       <button
+        *ngIf="hasAccess('write:employees')"
         class="low-scale"
         [ngClass]="{ disabled: selectedRow == null }"
         (click)="addAllocation()"
@@ -30,7 +33,11 @@
         <mat-icon>timeline</mat-icon>
       </button>
     </div>
-    <button class="add-employee-wrapper" (click)="addEmployee()">
+    <button
+      *ngIf="hasAccess('write:employees')"
+      class="add-employee-wrapper"
+      (click)="addEmployee()"
+    >
       <mat-icon>control_point</mat-icon>Add Employee
     </button>
   </div>
