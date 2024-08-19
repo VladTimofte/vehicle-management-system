@@ -15,8 +15,11 @@ import { AppAuthButtonComponent } from './components/app-auth-button/app-auth-bu
 import { LoginComponent } from "./pages/login/login.component";
 import { PermissionService } from './services/permissions.service';
 import { NotificationsComponent } from './components/notifications/notifications.component';
-import { notifications } from './mock/notifications';
 import { Notification } from './models/notifications';
+import { NotificationsService } from './services/notifications.service';
+import { Subscription } from 'rxjs';
+import { VehiclesService } from './services/crud/vehicles.service';
+import { EmployeesService } from './services/crud/employees.service';
 
 @Component({
     selector: 'app-root',
@@ -38,17 +41,54 @@ import { Notification } from './models/notifications';
         NotificationsComponent
     ]
 })
-export class AppComponent  {
+export class AppComponent implements OnInit {
   areNotificationsOpen: boolean = false;
   notifications: Notification[] = [];
+
+  private vehiclesSubscription: Subscription | undefined;
+  private employeesSubscription: Subscription | undefined;
 
   constructor(
     private router: Router,
     @Inject(DOCUMENT) public document: Document,
     public auth: AuthService,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
+    public notificationService: NotificationsService,
+    public vehicleService: VehiclesService,
+    public employeesService: EmployeesService
   ) {
-    this.notifications = notifications
+    this.notifications = this.notificationService.getNotifications();
+  }
+
+  ngOnInit(): void {
+    // Subscribe to vehicles observable
+    this.vehiclesSubscription = this.vehicleService
+      .getVehiclesObservable()
+      .subscribe((vehicles) => {
+        this.notificationService.emptyNotifications()
+        this.notificationService.initializeVehiclesNotifications(vehicles)
+        this.notificationService.initializeEmployeesNotifications(this.employeesService.getEmployees())
+        this.notifications = this.notificationService.getNotifications();
+      });
+    // Subscribe to employees observable
+    this.employeesSubscription = this.employeesService
+      .getEmployeesObservable()
+      .subscribe((employees) => {
+        this.notificationService.emptyNotifications()
+        this.notificationService.initializeEmployeesNotifications(employees)
+        this.notificationService.initializeVehiclesNotifications(this.vehicleService.getVehicles())
+        this.notifications = this.notificationService.getNotifications();
+      });
+  }
+
+  ngOnDestroy(): void {
+    // Unsubscribe from vehicles observable to avoid memory leaks
+    if (this.vehiclesSubscription) {
+      this.vehiclesSubscription.unsubscribe();
+    }
+    if (this.employeesSubscription) {
+        this.employeesSubscription.unsubscribe();
+      }
   }
 
   navigateTo(route: string): void {
