@@ -9,11 +9,14 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '@auth0/auth0-angular';
 import { DOCUMENT } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {MatBadgeModule} from '@angular/material/badge';
 
 import { AppAuthButtonComponent } from './components/app-auth-button/app-auth-button.component';
 import { LoginComponent } from "./pages/login/login.component";
 import { PermissionService } from './services/permissions.service';
-import { Observable, tap, catchError, of } from 'rxjs';
+import { NotificationsComponent } from './components/notifications/notifications.component';
+import { notifications } from './mock/notifications';
+import { Notification } from './models/notifications';
 
 @Component({
     selector: 'app-root',
@@ -30,16 +33,23 @@ import { Observable, tap, catchError, of } from 'rxjs';
         RouterOutlet,
         AppAuthButtonComponent,
         LoginComponent,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        MatBadgeModule,
+        NotificationsComponent
     ]
 })
 export class AppComponent  {
+  areNotificationsOpen: boolean = false;
+  notifications: Notification[] = [];
+
   constructor(
     private router: Router,
     @Inject(DOCUMENT) public document: Document,
     public auth: AuthService,
     private permissionService: PermissionService
-  ) {}
+  ) {
+    this.notifications = notifications
+  }
 
   navigateTo(route: string): void {
     this.router.navigateByUrl(route);
@@ -56,6 +66,10 @@ export class AppComponent  {
 
   hasAccess(permission: string): boolean {
    return this.permissionService.hasAccess(permission)
+  }
+
+  openNotifications() {
+    this.areNotificationsOpen = !this.areNotificationsOpen
   }
   
 }

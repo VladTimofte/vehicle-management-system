@@ -1,0 +1,30 @@
+.notifications-wrapper {
+    position: absolute;
+    background: white;
+    color: black;
+    padding: 20px 15px;
+    top: 70px;
+    right: 85px;
+    border-radius: 12px;
+    box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.5);
+
+    .header {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .notifications-body {
+        max-height: 300px;
+        overflow: auto;
+
+        .notification-element {
+            display: flex;
+            gap: 10px;
+            padding-bottom: 4px;
+        }
+    }
+}
+
+.display-none {
+    display: none;
+}

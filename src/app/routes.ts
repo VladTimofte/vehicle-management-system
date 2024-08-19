@@ -6,7 +6,7 @@ import { EmployeesComponent } from './pages/employees/employees.component';
 import { AllocationsComponent } from './pages/allocations/allocations.component';
 import { HistoryComponent } from './pages/history/history.component';
 import { RoleGuard } from './services/role-guard.service';
-import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { AccessDeniedComponent } from './pages/access-denied/access-denied.component';
 
 export const routes: Routes = [
   {
