@@ -1,32 +1,42 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { rolePermissions } from '../data/permissions';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PermissionService {
-concatPermissions: string[] = []
+  private concatPermissions: string[] = [];
+  private permissionsLoadedSubject = new BehaviorSubject<boolean>(false);
+  permissionsLoaded$ = this.permissionsLoadedSubject.asObservable();
 
   constructor(private auth: AuthService) {
     this.auth.idTokenClaims$.subscribe(claims => {
       const roles: string[] =
         claims?.['https://hevicle-management-sys-dev.com/roles'] || [];
 
-        roles.forEach(role => {
-            if (rolePermissions[role as keyof typeof rolePermissions]) {
-                rolePermissions[role as keyof typeof rolePermissions].forEach(perm => {
-                // Verifică dacă permisiunea nu este deja în array
-                if (!this.concatPermissions.includes(perm)) {
-                    this.concatPermissions.push(perm);
-                }
-              });
+      roles.forEach(role => {
+        if (rolePermissions[role as keyof typeof rolePermissions]) {
+          rolePermissions[role as keyof typeof rolePermissions].forEach(perm => {
+            if (!this.concatPermissions.includes(perm)) {
+              this.concatPermissions.push(perm);
             }
           });
+        }
+      });
+      this.permissionsLoadedSubject.next(true); // Notifică că permisiunile sunt încărcate
     });
   }
 
-  hasAccess(permission: string): boolean {
-    return this.concatPermissions?.includes(permission)
+  hasAccess(permission: string): Observable<boolean> {
+    return new Observable<boolean>((observer) => {
+      this.permissionsLoaded$.subscribe(isLoaded => {
+        if (isLoaded) {
+          observer.next(this.concatPermissions.includes(permission));
+          observer.complete();
+        }
+      });
+    });
   }
 }

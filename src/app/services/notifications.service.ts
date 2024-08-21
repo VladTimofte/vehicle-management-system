@@ -7,23 +7,33 @@ import { documentExpired, documentExpiresWithinMonth } from '../utils/booleans';
 import { EmployeesService } from './crud/employees.service';
 import { Vehicle } from '../models/vehicle.model';
 import { Employee } from '../models/employee.model';
+import { PermissionService } from './permissions.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationsService {
+  public hasVehicleAccess$!: boolean;
+  public hasEmployeesAccess$!: boolean;
   public notifications: Notification[] = [];
 
   constructor(
     public vehicleService: VehiclesService,
-    public employeesService: EmployeesService
+    public employeesService: EmployeesService,
+    public permissionService: PermissionService
   ) {
-    this.initializeVehiclesNotifications(this.vehicleService.getVehicles());
-    this.initializeEmployeesNotifications(this.employeesService.getEmployees());
+
+    this.permissionService.hasAccess('write:vehicles').subscribe(hasAccess => {
+      this.hasVehicleAccess$ = hasAccess
+      this.initializeVehiclesNotifications(this.vehicleService.getVehicles());
+    })
+    this.permissionService.hasAccess('write:employees').subscribe(hasAccess => {
+      this.hasEmployeesAccess$ = hasAccess
+      this.initializeEmployeesNotifications(this.employeesService.getEmployees());
+    })
   }
 
   public emptyNotifications() {
-    console.log('TEST', this.notifications);
     this.notifications = [];
   }
 
@@ -37,13 +47,14 @@ export class NotificationsService {
 
   private computeVehicleNotifications(vehicles: Vehicle[]) {
     for (let i = 0; i < vehicles.length; i++) {
-      if (documentExpired(vehicles[i].expirationDateITP)) {
+      console.log('vehicles.expirationDateITP', ': ', this.hasVehicleAccess$)
+      if (documentExpired(vehicles[i].expirationDateITP) && this.hasVehicleAccess$) {
         // Vehicle ITP expired
         this.pushNotification(
           'dangerous',
           `Vehicle's ${vehicles[i].plateNumber} ITP has expired!`
         );
-      } else if (documentExpiresWithinMonth(vehicles[i].expirationDateITP)) {
+      } else if (documentExpiresWithinMonth(vehicles[i].expirationDateITP) && this.hasVehicleAccess$) {
         // Vehicle ITP expires in less than a month
         this.pushNotification(
           'error',
@@ -51,13 +62,13 @@ export class NotificationsService {
         );
       }
 
-      if (documentExpired(vehicles[i].expirationDateRCA)) {
+      if (documentExpired(vehicles[i].expirationDateRCA) && this.hasVehicleAccess$) {
         // Vehicle RCA expired
         this.pushNotification(
           'dangerous',
           `Vehicle's ${vehicles[i].plateNumber} RCA has expired!`
         );
-      } else if (documentExpiresWithinMonth(vehicles[i].expirationDateRCA)) {
+      } else if (documentExpiresWithinMonth(vehicles[i].expirationDateRCA) && this.hasVehicleAccess$) {
         // Vehicle RCA expires in less than a month
         this.pushNotification(
           'error',
@@ -69,14 +80,15 @@ export class NotificationsService {
 
   private computeEmployeesNotifications(employees: Employee[]) {
     for (let i = 0; i < employees.length; i++) {
-      if (documentExpired(employees[i].drivingLicenseExDate)) {
+      if (documentExpired(employees[i].drivingLicenseExDate) && this.hasEmployeesAccess$) {
         // Employee Driving License expired
         this.pushNotification(
           'dangerous',
           `${employees[i].firstName} ${employees[i].lastName}'s Driving License has expired `
         );
       } else if (
-        documentExpiresWithinMonth(employees[i].drivingLicenseExDate) // Employee Driving License expires in less than a month
+        documentExpiresWithinMonth(employees[i].drivingLicenseExDate)
+        && this.hasEmployeesAccess$ // Employee Driving License expires in less than a month
       ) {
         this.pushNotification(
           'error',

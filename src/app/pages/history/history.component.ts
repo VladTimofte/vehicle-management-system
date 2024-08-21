@@ -40,7 +40,9 @@ export class HistoryComponent implements OnInit, OnDestroy {
   private gridApi!: GridApi;
   public selectedRow: any;
 
-  constructor(private historyService: HistoryService) {}
+  constructor(
+    private historyService: HistoryService,
+  ) {}
 
   ngOnInit(): void {
     // Subscribe to history observable

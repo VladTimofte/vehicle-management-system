@@ -24,6 +24,7 @@ import { AddEditVehicleFormService } from 'src/app/services/add-edit-vehicle.ser
 import { DialogService } from 'src/app/services/dialog.service';
 import { documentExpired, documentExpiresWithinMonth } from 'src/app/utils/booleans';
 import { PermissionService } from '@src/app/services/permissions.service';
+import { SaveToExcelService } from '@src/app/services/save-to-excell.service'
 
 @Component({
   selector: 'app-vehicles',
@@ -39,6 +40,7 @@ import { PermissionService } from '@src/app/services/permissions.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VehiclesComponent implements OnInit, OnDestroy {
+  public hasAccess$!: boolean;
   public vehicles: Vehicle[] = [];
   private vehiclesSubscription: Subscription | undefined;
   private gridApi!: GridApi;
@@ -48,8 +50,9 @@ export class VehiclesComponent implements OnInit, OnDestroy {
     private vehiclesService: VehiclesService,
     private addEditVehicleService: AddEditVehicleFormService,
     private dialogService: DialogService,
-    private permissionService: PermissionService
-  ) {}
+    private permissionService: PermissionService,
+  ) {
+  }
 
   ngOnInit(): void {
     // Subscribe to vehicles observable
@@ -58,6 +61,9 @@ export class VehiclesComponent implements OnInit, OnDestroy {
       .subscribe((vehicles) => {
         this.updateGrid(vehicles)
       });
+      this.permissionService.hasAccess('write:vehicles').subscribe(hasAccess => {
+        this.hasAccess$ = hasAccess
+      })
   }
 
   ngOnDestroy(): void {
@@ -162,7 +168,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   }
 
   addVehicle() {
-    if (this.hasAccess('write:vehicles')) {
+    if (this.hasAccess$) {
     this.addEditVehicleService
       .openAddEditVehicleForm({
         vehicle: emptyVehicleObj,
@@ -186,7 +192,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   }
 
   editRow() {
-    if (this.hasAccess('write:vehicles')) {
+    if (this.hasAccess$) {
     this.addEditVehicleService
       .openAddEditVehicleForm({
         vehicle: this.selectedRow[0],
@@ -202,7 +208,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   }
 
   onRemoveSelected() {
-    if (this.hasAccess('write:vehicles')) {
+    if (this.hasAccess$) {
     const selectedData = this.gridApi.getSelectedRows()[0];
     this.dialogService
       .openConfirmDialog({
@@ -219,7 +225,4 @@ export class VehiclesComponent implements OnInit, OnDestroy {
     } // Todo: create n error message UI else statement
   }
 
-  hasAccess(permission: string): boolean {
-    return this.permissionService.hasAccess(permission)
-   }
 }

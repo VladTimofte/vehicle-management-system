@@ -10,37 +10,37 @@ import { AccessDeniedComponent } from './pages/access-denied/access-denied.compo
 
 export const routes: Routes = [
   {
-    path:'',
+    path: '',
     children: [
       {
         path: '',
         component: DashboardComponent,
         canActivate: [RoleGuard],
-        data: { roles: ['admin', 'manager', 'hr'] },
+        data: { roles: ['manager', 'hr'] },
       },
       {
         path: 'vehicles',
         component: VehiclesComponent,
         canActivate: [RoleGuard],
-        data: { roles: ['admin', 'manager'] },
+        data: { roles: ['manager'] },
       },
       {
         path: 'employees',
         component: EmployeesComponent,
         canActivate: [RoleGuard],
-        data: { roles: ['admin', 'hr'] },
+        data: { roles: ['hr'] },
       },
       {
         path: 'allocations',
         component: AllocationsComponent,
         canActivate: [RoleGuard],
-        data: { roles: ['admin', 'hr'] },
+        data: { roles: ['hr'] },
       },
       {
         path: 'history',
         component: HistoryComponent,
         canActivate: [RoleGuard],
-        data: { roles: ['admin', 'manager'] },
+        data: { roles: ['manager'] },
       },
     ]
   },

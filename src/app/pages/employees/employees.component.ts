@@ -45,6 +45,7 @@ import { PermissionService } from '@src/app/services/permissions.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmployeesComponent implements OnInit, OnDestroy {
+  public hasAccess$!: boolean;
   public employees: Employee[] = [];
   private EmployeesSubscription: Subscription | undefined;
   public searchTerm: string = '';
@@ -57,7 +58,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
     private addEditEmployeeService: AddEditEmployeeFormService,
     private dialogService: DialogService,
     private addEditAllocationFormService: AddEditAllocationFormService,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
   ) {
     this.gridOptions = <GridOptions>{};
     this.gridOptions.getRowStyle = this.getRowStyle.bind(this);
@@ -70,6 +71,9 @@ export class EmployeesComponent implements OnInit, OnDestroy {
       .subscribe((employees) => {
         this.updateGrid(employees);
       });
+      this.permissionService.hasAccess('write:employees').subscribe(hasAccess => {
+        this.hasAccess$ = hasAccess
+      })
   }
 
   ngOnDestroy(): void {
@@ -126,7 +130,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
   }
 
   addEmployee() {
-    if (this.hasAccess('write:employees')) {
+    if (this.hasAccess$) {
       this.addEditEmployeeService
         .openAddEditEmployeeForm({
           employee: emptyEmployeeObj,
@@ -150,7 +154,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
   }
 
   editRow() {
-    if (this.hasAccess('write:employees')) {
+    if (this.hasAccess$) {
       this.addEditEmployeeService
         .openAddEditEmployeeForm({
           employee: this.selectedRow[0],
@@ -166,7 +170,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
   }
 
   onRemoveSelected() {
-    if (this.hasAccess('write:employees')) {
+    if (this.hasAccess$) {
       const selectedData = this.gridApi.getSelectedRows()[0];
       this.dialogService
         .openConfirmDialog({
@@ -193,7 +197,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
   }
 
   addAllocation() {
-    if (this.hasAccess('write:employees')) {
+    if (this.hasAccess$) {
       this.addEditAllocationFormService
         .openAddEditAllocationForm({
           allocation: {
@@ -231,9 +235,5 @@ export class EmployeesComponent implements OnInit, OnDestroy {
         add: this.employees,
       })!;
     }
-  }
-
-  hasAccess(permission: string): boolean {
-    return this.permissionService.hasAccess(permission);
   }
 }

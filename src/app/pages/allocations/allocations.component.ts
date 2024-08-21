@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, GridApi } from 'ag-grid-community';
 import { DateTime } from 'luxon';
@@ -37,6 +37,7 @@ import { PermissionService } from '@src/app/services/permissions.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllocationsComponent implements OnInit, OnDestroy {
+  public hasAccess$!: boolean;
   public filteredAllocations: Allocation[] = [];
   private AllocationsSubscription: Subscription | undefined;
   private VehiclesSubscription: Subscription | undefined;
@@ -53,7 +54,7 @@ export class AllocationsComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     private employeesService: EmployeesService,
     private vehiclesService: VehiclesService,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
   ) {
     this.vehicles = this.vehiclesService.getVehicles();
     this.employees = this.employeesService.getEmployees();
@@ -78,6 +79,9 @@ export class AllocationsComponent implements OnInit, OnDestroy {
       .subscribe((employee) => {
         this.employees = employee;
       });
+      this.permissionService.hasAccess('write:allocations').subscribe(hasAccess => {
+        this.hasAccess$ = hasAccess
+      })
   }
 
   ngOnDestroy(): void {
@@ -270,7 +274,7 @@ export class AllocationsComponent implements OnInit, OnDestroy {
   }
 
   addAllocation() {
-    if (this.hasAccess('write:allocations')) {
+    if (this.hasAccess$) {
       this.addEditAllocationFormService
         .openAddEditAllocationForm({
           allocation: emptyAllocationObj,
@@ -294,7 +298,7 @@ export class AllocationsComponent implements OnInit, OnDestroy {
   }
 
   editRow() {
-    if (this.hasAccess('write:allocations')) {
+    if (this.hasAccess$) {
       this.addEditAllocationFormService
         .openAddEditAllocationForm({
           allocation: this.selectedRow[0],
@@ -310,7 +314,7 @@ export class AllocationsComponent implements OnInit, OnDestroy {
   }
 
   onRemoveSelected() {
-    if (this.hasAccess('write:allocations')) {
+    if (this.hasAccess$) {
       const selectedData = this.gridApi.getSelectedRows()[0];
       const assignedEmployee = this.employees.find(
         (el) => el.id === selectedData?.employeeId
@@ -334,9 +338,5 @@ export class AllocationsComponent implements OnInit, OnDestroy {
         });
       this.deselectRows();
     } // Todo: create n error message UI else statement
-  }
-
-  hasAccess(permission: string): boolean {
-    return this.permissionService.hasAccess(permission);
   }
 }
