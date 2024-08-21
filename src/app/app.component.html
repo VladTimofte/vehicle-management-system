@@ -32,22 +32,22 @@
                 <mat-icon class="low-scale">house</mat-icon>
               </span>
             </a>
-            <a *ngIf="hasAccess('read:vehicles')" mat-list-item (click)="navigateTo('vehicles')" title="Vehicles">
+            <a *ngIf="hasVehicleAccess$" mat-list-item (click)="navigateTo('vehicles')" title="Vehicles">
               <span class="entry">
                 <mat-icon class="low-scale">drive_eta</mat-icon>
               </span>
             </a>
-            <a *ngIf="hasAccess('read:employees')" mat-list-item (click)="navigateTo('employees')" title="Employees">
+            <a *ngIf="hasEmployeesAccess$" mat-list-item (click)="navigateTo('employees')" title="Employees">
               <span class="entry">
                 <mat-icon class="low-scale">people</mat-icon>
               </span>
             </a>
-            <a *ngIf="hasAccess('read:allocations')" mat-list-item (click)="navigateTo('allocations')" title="Allocations">
+            <a *ngIf="hasAllocationsAccess$" mat-list-item (click)="navigateTo('allocations')" title="Allocations">
               <span class="entry">
                 <mat-icon class="low-scale">timeline</mat-icon>
               </span>
             </a>
-            <a *ngIf="hasAccess('read:history')" mat-list-item (click)="navigateTo('history')" title="History">
+            <a *ngIf="hasHistoryAccess$" mat-list-item (click)="navigateTo('history')" title="History">
               <span class="entry">
                 <mat-icon class="low-scale">history</mat-icon>
               </span>
@@ -56,6 +56,7 @@
         </div>
         <div class="right-content">
           <div *ngIf="conditionalDisplayActionBar()" class="actions-bar-wrapper">
+            <mat-icon (click)="exportToExcell()" class="low-scale">description</mat-icon>
             <mat-icon class="low-scale">picture_as_pdf</mat-icon>
             <mat-icon class="low-scale">mail</mat-icon>
           </div>

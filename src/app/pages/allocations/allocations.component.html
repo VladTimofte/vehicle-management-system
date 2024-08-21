@@ -11,7 +11,7 @@
       />
       <button (click)="searchInputListener(searchInput.value)">Search</button>
       <button
-        *ngIf="hasAccess('write:allocations')"
+        *ngIf="hasAccess$"
         class="low-scale"
         [ngClass]="{ disabled: selectedRow === undefined }"
         (click)="onRemoveSelected()"
@@ -19,7 +19,7 @@
         <mat-icon>delete_outline</mat-icon>
       </button>
       <button
-        *ngIf="hasAccess('write:allocations')"
+        *ngIf="hasAccess$"
         class="low-scale"
         [ngClass]="{ disabled: selectedRow === undefined }"
         (click)="editRow()"
@@ -28,7 +28,7 @@
       </button>
     </div>
     <button
-      *ngIf="hasAccess('write:allocations')"
+      *ngIf="hasAccess$"
       class="add-allocation-wrapper"
       (click)="addAllocation()"
     >

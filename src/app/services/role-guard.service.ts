@@ -24,9 +24,12 @@ export class RoleGuard implements CanActivate {
           return this.auth.idTokenClaims$.pipe(
             map(claims => {
               const roles = claims?.['https://hevicle-management-sys-dev.com/roles'] || [];
-              const allowedRoles = route.data['roles'] as Array<string>;
+              const allowedRoles = route.data['roles'] as Array<string> || [];
 
-              if (allowedRoles.some(role => roles.includes(role))) {
+              // Asigură-te că 'admin' este întotdeauna permis
+              const rolesWithDefault = ['admin', ...allowedRoles];
+
+              if (rolesWithDefault.some(role => roles.includes(role))) {
                 return true;
               } else {
                 this.router.navigate(['/access-denied']);

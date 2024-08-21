@@ -1,11 +1,20 @@
 <div class="notifications-wrapper" [ngClass]="{ 'display-none': !display }">
   <div class="header">
+    <h6>Notifications</h6>
     <mat-icon class="low-scale" (click)="closeNotifications()">close</mat-icon>
   </div>
   <div class="notifications-body">
-    <div class="notification-element" *ngFor="let item of notifications; let i = index">
-        <mat-icon class="low-scale">{{item.icon}}</mat-icon>
-      <div class="notification">{{ item.notification }}</div>
+    <div *ngIf="notifications?.length; else noNotifications">
+      <div
+        class="notification-element"
+        *ngFor="let item of notifications; let i = index"
+      >
+        <mat-icon class="low-scale">{{ item.icon }}</mat-icon>
+        <div class="notification">{{ item.notification }}</div>
+      </div>
     </div>
+    <ng-template #noNotifications>
+      <div>No notifications</div>
+    </ng-template>
   </div>
 </div>

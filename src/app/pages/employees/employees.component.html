@@ -9,7 +9,7 @@
         placeholder="Search"
       />
       <button
-        *ngIf="hasAccess('write:employees')"
+        *ngIf="hasAccess$"
         class="rlow-scale"
         [ngClass]="{ disabled: selectedRow == null }"
         (click)="onRemoveSelected()"
@@ -17,7 +17,7 @@
         <mat-icon>delete_outline</mat-icon>
       </button>
       <button
-        *ngIf="hasAccess('write:employees')"
+        *ngIf="hasAccess$"
         class="low-scale"
         [ngClass]="{ disabled: selectedRow == null }"
         (click)="editRow()"
@@ -25,7 +25,7 @@
         <mat-icon>edit</mat-icon>
       </button>
       <button
-        *ngIf="hasAccess('write:employees')"
+        *ngIf="hasAccess$"
         class="low-scale"
         [ngClass]="{ disabled: selectedRow == null }"
         (click)="addAllocation()"
@@ -34,7 +34,7 @@
       </button>
     </div>
     <button
-      *ngIf="hasAccess('write:employees')"
+      *ngIf="hasAccess$"
       class="add-employee-wrapper"
       (click)="addEmployee()"
     >
