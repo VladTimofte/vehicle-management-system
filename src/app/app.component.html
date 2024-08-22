@@ -7,7 +7,7 @@
 <ng-template #loaded>
   <ng-container *ngIf="auth.isAuthenticated$ | async;">
     <!-- Meniu si header doar pentru rutele din MainLayoutComponent -->
-    <ng-container *ngIf="!isAccessDeniedRoute(); else noLayout">
+    <ng-container *ngIf="!isAccessDeniedRoute(); else accesDeniedLayout">
       <div class="mat-toolbar">
         <div class="menu-bar-left-element">
           <div class="menu-header-logo-txt">
@@ -58,7 +58,7 @@
           <div *ngIf="conditionalDisplayActionBar()" class="actions-bar-wrapper">
             <mat-icon (click)="exportToDocument('excell')" class="low-scale" title="Download as Excell">description</mat-icon>
             <mat-icon (click)="exportToDocument('pdf')" class="low-scale" title="Download as PDF">picture_as_pdf</mat-icon>
-            <mat-icon class="low-scale">mail</mat-icon>
+            <mat-icon (click)="exportToDocument('send_email')" class="low-scale">mail</mat-icon>
           </div>
           <router-outlet></router-outlet>
         </div>
@@ -66,7 +66,7 @@
     </ng-container>
 
     <!-- Layout fără meniu pentru Access Denied -->
-    <ng-template #noLayout>
+    <ng-template #accesDeniedLayout>
       <router-outlet></router-outlet>
     </ng-template>
   </ng-container>

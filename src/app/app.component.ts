@@ -24,7 +24,8 @@ import { VehiclesComponent } from './pages/vehicles/vehicles.component';
 import { EmployeesComponent } from './pages/employees/employees.component';
 import { AllocationsComponent } from './pages/allocations/allocations.component';
 import { HistoryComponent } from './pages/history/history.component';
-import { SaveToDocService } from './services/save-to-doc.service';
+import { HandleDocument } from './services/handle-document.service'
+import { DialogService } from './services/dialog.service';
 
 @Component({
   selector: 'app-root',
@@ -70,7 +71,8 @@ export class AppComponent implements OnInit {
     public notificationService: NotificationsService,
     public vehicleService: VehiclesService,
     public employeesService: EmployeesService,
-    private saveToDocService: SaveToDocService,
+    private handleDocument: HandleDocument,
+    private dialogService: DialogService
   ) {
     this.notifications = this.notificationService.getNotifications();
   }
@@ -143,7 +145,7 @@ export class AppComponent implements OnInit {
     this.areNotificationsOpen = !this.areNotificationsOpen;
   }
 
-  exportToDocument(extension: string) {
-    this.saveToDocService.exportToDocument(this.router.url, extension);
+  exportToDocument(action: string) {
+    this.handleDocument.exportToDocument(this.router.url, action);
   }
 }

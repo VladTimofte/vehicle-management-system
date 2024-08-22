@@ -48,7 +48,7 @@
     gap: 10px;
   }
 
-  .error-icon, .question-icon, .warning-icon {
+  .error-icon, .question-icon, .warning-icon, .error-message {
     color: red;
   }
 
@@ -63,5 +63,26 @@
     span {
       cursor: pointer;
       font-size: 28px;
+    }
+  }
+
+  .row {
+    .form-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .document-img {
+      width: 60px;
+      padding: 6px;
+
+      &.selected {
+        border: 2px solid black;
+        border-radius: 6px;
+      }
+    }
+
+    .icons-wrapper {
+      padding: 20px 0;
     }
   }

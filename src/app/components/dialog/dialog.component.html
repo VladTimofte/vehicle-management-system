@@ -7,10 +7,19 @@
       </div>
       <div class="modal-header">
         <h3 class="modal-title">
-          <mat-icon class="error-icon" *ngIf="type === 'error'">highlight_off</mat-icon>
-          <mat-icon class="question-icon" *ngIf="type === 'question'">help_outline</mat-icon>
-          <mat-icon class="warning-icon" *ngIf="type === 'warning'">warning_amber</mat-icon>
+          <mat-icon class="error-icon" *ngIf="type === 'error'"
+            >highlight_off</mat-icon
+          >
+          <mat-icon class="question-icon" *ngIf="type === 'question'"
+            >help_outline</mat-icon
+          >
+          <mat-icon class="warning-icon" *ngIf="type === 'warning'"
+            >warning_amber</mat-icon
+          >
           <mat-icon class="info-icon" *ngIf="type === 'info'">info</mat-icon>
+          <mat-icon class="info-icon" *ngIf="type === 'email'"
+            >mail_outline</mat-icon
+          >
           {{ title }}
         </h3>
       </div>
@@ -18,13 +27,119 @@
       <div class="modal-body">
         <p>{{ message }}</p>
       </div>
+
+      <form *ngIf="type === 'email'" [formGroup]="modalForm">
+        <div class="form-wrapper">
+          <div class="row">
+            <div class="form-item">
+              <label for="sendTo">Send To:</label>
+              <input
+                type="text"
+                id="sendTo"
+                formControlName="sendTo"
+                placeholder="example@mail.com"
+              />
+              <div
+                *ngIf="
+                  modalForm.get('sendTo')?.invalid &&
+                  modalForm.get('sendTo')?.touched
+                "
+              >
+                <small
+                  class="error-message"
+                  *ngIf="modalForm.get('sendTo')?.hasError('required')"
+                  >Email reciever is required.</small
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-item">
+              <label for="messageInput">Message:</label>
+              <textarea
+                type="text"
+                id="messageInput"
+                formControlName="messageInput"
+                placeholder="Message"
+                rows="10"
+              ></textarea>
+              <div
+                *ngIf="
+                  modalForm.get('messageInput')?.invalid &&
+                  modalForm.get('messageInput')?.touched
+                "
+              >
+                <small
+                  class="error-message"
+                  *ngIf="modalForm.get('messageInput')?.hasError('required')"
+                  >A message is required.</small
+                >
+              </div>
+            </div>
+          </div>
+
+          <br />
+
+          <div class="row">
+            <label for="messageInput">Select document type</label>
+            <div class="icons-wrapper">
+              <img
+                (click)="onSelectDocumentType('excell')"
+                class="document-img low-scale"
+                src="../../../assets/documents/excell_icon.png"
+                alt="Excell"
+                [ngClass]="{ 'selected': selectedDocumentType === 'excell' }"
+              />
+              <img
+                (click)="onSelectDocumentType('pdf')"
+                class="document-img low-scale"
+                src="../../../assets/documents/pdf_icon.png"
+                alt="PDF"
+                [ngClass]="{ 'selected': selectedDocumentType === 'pdf' }"
+              />
+            </div>
+            <div
+                *ngIf="
+                  modalForm.get('documentType')?.invalid &&
+                  modalForm.get('documentType')?.touched
+                "
+              >
+                <small
+                  class="error-message"
+                  *ngIf="modalForm.get('documentType')?.hasError('required')"
+                  >Document type is required.</small
+                >
+              </div>
+          </div>
+        </div>
+      </form>
+
       <br />
       <div class="modal-footer">
-        <button *ngIf="type === 'question'" type="button" class="btn btn-secondary" (click)="cancel()">
+        <button
+          *ngIf="type === 'question'"
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancel()"
+        >
           Cancel
-        </button>        
-        <button type="button" class="btn btn-primary" (click)="confirm()">
+        </button>
+        <button
+          *ngIf="type !== 'email'"
+          type="button"
+          class="btn btn-primary"
+          (click)="confirm()"
+        >
           OK
+        </button>
+        <button
+          (click)="onSendEmail()"
+          *ngIf="type === 'email'"
+          type="button"
+          class="btn btn-primary"
+        >
+          Send
         </button>
       </div>
     </div>
