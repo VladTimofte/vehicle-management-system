@@ -24,7 +24,7 @@ import { VehiclesComponent } from './pages/vehicles/vehicles.component';
 import { EmployeesComponent } from './pages/employees/employees.component';
 import { AllocationsComponent } from './pages/allocations/allocations.component';
 import { HistoryComponent } from './pages/history/history.component';
-import { SaveToExcelService } from './services/save-to-excell.service';
+import { SaveToDocService } from './services/save-to-doc.service';
 
 @Component({
   selector: 'app-root',
@@ -70,7 +70,7 @@ export class AppComponent implements OnInit {
     public notificationService: NotificationsService,
     public vehicleService: VehiclesService,
     public employeesService: EmployeesService,
-    private saveToExcellService: SaveToExcelService
+    private saveToDocService: SaveToDocService,
   ) {
     this.notifications = this.notificationService.getNotifications();
   }
@@ -143,7 +143,7 @@ export class AppComponent implements OnInit {
     this.areNotificationsOpen = !this.areNotificationsOpen;
   }
 
-  exportToExcell() {
-    this.saveToExcellService.exportToExcel(this.router.url);
+  exportToDocument(extension: string) {
+    this.saveToDocService.exportToDocument(this.router.url, extension);
   }
 }
