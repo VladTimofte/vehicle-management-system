@@ -1,45 +1,46 @@
 import { Injectable } from '@angular/core';
-import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { DateTime } from 'luxon';
 import { VehiclesService } from './crud/vehicles.service';
 import { EmployeesService } from './crud/employees.service';
 import { AllocationsService } from './crud/allocations.service';
 import { HistoryService } from './crud/history.service';
-import { formatActionString, formatEntityString } from '../utils/strings';
 import {
+  generateExcell,
+  generatePDF,
   refactorAllocations,
   refactorEmployees,
   refactorHistory,
   refactorVehicles,
 } from '../utils/objects';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { DialogService } from './dialog.service';
+import { FileUploadService } from './file-upload.service';
+import { EmailService } from './emailjs.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SaveToDocService {
-  private readonly EXCEL_TYPE =
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-  private readonly EXCEL_EXTENSION = '.xlsx';
-
+export class HandleDocument {
   constructor(
     private vehiclesService: VehiclesService,
     private employeesService: EmployeesService,
     private allocationsService: AllocationsService,
     private historyService: HistoryService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private fileUploadService: FileUploadService,
+    private emailService: EmailService
   ) {}
 
-  exportToDocument(route: string, extension: string) {
+  exportToDocument(route: string, action: string) {
     // Define a function variable and set default to exportToExcell
     let fnc = this.exportToExcell.bind(this);
 
-    // Set the function to call based on the extension
-    if (extension === 'pdf') {
+    // Set the function to call based on the action
+    if (action === 'pdf') {
       fnc = this.exportToPDF.bind(this);
+    }
+    if (action === 'send_email') {
+      fnc = this.sendEmail.bind(this);
     }
 
     // Use a switch-case to handle different routes
@@ -77,52 +78,61 @@ export class SaveToDocService {
     }
   }
 
-  exportToExcell(data: any[], fileName: string = 'data') {
+  exportToExcell(data: any[], fileName: any = 'data') {
     if (data.length > 0) {
-      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-      const workbook: XLSX.WorkBook = {
-        Sheets: { data: worksheet },
-        SheetNames: ['data'],
-      };
-
-      const excelBuffer: any = XLSX.write(workbook, {
-        bookType: 'xlsx',
-        type: 'array',
-      });
-
-      const dataBlob: Blob = new Blob([excelBuffer], { type: this.EXCEL_TYPE });
-      saveAs(dataBlob, `${fileName}${this.EXCEL_EXTENSION}`);
+      saveAs(generateExcell(data), `${fileName}.xlsx`);
     } else {
-      this.dialogService
-        .openConfirmDialog({
-          title: 'Cannot download',
-          message: 'Cannot generate excell file, since there is no data',
-          type: 'info',
-        });
+      this.dialogService.openConfirmDialog({
+        title: 'Cannot download',
+        message: 'Cannot generate excell file, since there is no data',
+        type: 'info',
+      });
     }
   }
 
-  exportToPDF(data: any[], fileName: string = 'data') {
-    const doc = new jsPDF();
-
+  exportToPDF(data: any[], fileName: any = 'data') {
     // Check if there's data to export
     if (data.length > 0) {
-      // Extract headers from the first object
-      const headers = Object.keys(data[0]);
-
-      autoTable(doc, {
-        head: [headers],
-        body: data.map((item) => headers.map((header) => item[header])),
-      });
-
-      doc.save(`${fileName}.pdf`);
+      generatePDF(data).save(`${fileName}.pdf`);
     } else {
+      this.dialogService.openConfirmDialog({
+        title: 'Cannot download',
+        message: 'Cannot generate PDF file, since there is no data',
+        type: 'info',
+      });
+    }
+  }
+
+  sendEmail(data: any[], fileName: any = 'data') {
+    if (data.length > 0) {
       this.dialogService
         .openConfirmDialog({
-          title: 'Cannot download',
-          message: 'Cannot generate PDF file, since there is no data',
-          type: 'info',
+          title: 'Send Email',
+          message: '',
+          type: 'email',
+        })
+        .then((response) => {
+          if (response.documentType === 'excell') {
+            this.fileUploadService
+              .generateAndUploadExcel(data)
+              .subscribe((fileUploadedRes) => {
+                this.emailService.sendEmail({
+                  to_email: response.sendTo,
+                  message: response.messageInput,
+                  link_url: fileUploadedRes.url,
+                });
+              });
+          }
+          if (response.documentType === 'pdf') {
+            // Generate and upload PDF file
+          }
         });
+    } else {
+      this.dialogService.openConfirmDialog({
+        title: 'Cannot send email',
+        message: 'Cannot send file via email, since there is no data',
+        type: 'info',
+      });
     }
   }
 }

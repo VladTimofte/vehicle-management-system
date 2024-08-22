@@ -6,14 +6,15 @@ import {
   inject,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { FormsModule, FormControl } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import {
+  FormsModule,
+  FormControl,
   ReactiveFormsModule,
   FormBuilder,
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -26,7 +27,7 @@ import { Employee } from 'src/app/models/employee.model';
 import { EmployeesService } from '@src/app/services/crud/employees.service';
 import { jobDepartments } from 'src/app/shared/employee';
 import { isCNPValid } from 'src/app/utils/strings';
-import { DrivingLicenseCategoriesComponent } from "../driving-license-categories/driving-license-categories.component";
+import { DrivingLicenseCategoriesComponent } from '../driving-license-categories/driving-license-categories.component';
 
 @Component({
   selector: 'app-add-edit-employee-modal',
@@ -43,8 +44,8 @@ import { DrivingLicenseCategoriesComponent } from "../driving-license-categories
     MatDatepickerModule,
     MatFormFieldModule,
     MatNativeDateModule,
-    DrivingLicenseCategoriesComponent
-],
+    DrivingLicenseCategoriesComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddEditEmployeeModalComponent {
@@ -85,8 +86,8 @@ export class AddEditEmployeeModalComponent {
       emergencyContactName: this.employee.emergencyContactName,
       emergencyContactPhoneNumber: this.employee.emergencyContactPhoneNumber,
     });
-    this.modalForm.valueChanges.subscribe(value => {
-      this.keepEmployeeUpdated(value)
+    this.modalForm.valueChanges.subscribe((value) => {
+      this.keepEmployeeUpdated(value);
     });
   }
 
@@ -94,8 +95,10 @@ export class AddEditEmployeeModalComponent {
     this.employee = {
       ...this.employee,
       ...value,
-      drivingLicenseExDate: DateTime.fromJSDate(this.modalForm.value.drivingLicenseExDate).toMillis()
-    }
+      drivingLicenseExDate: DateTime.fromJSDate(
+        this.modalForm.value.drivingLicenseExDate
+      ).toMillis(),
+    };
   }
 
   cnpValidator(control: FormControl): { [key: string]: any } | null {
@@ -127,7 +130,9 @@ export class AddEditEmployeeModalComponent {
     } else {
       dLCValue.push(category);
     }
-    this.modalForm.get('drivingLicenseCategories')?.patchValue(dLCValue, { emitEvent: false });
-    this.keepEmployeeUpdated(this.modalForm.value)
+    this.modalForm
+      .get('drivingLicenseCategories')
+      ?.patchValue(dLCValue, { emitEvent: false });
+    this.keepEmployeeUpdated(this.modalForm.value);
   }
 }

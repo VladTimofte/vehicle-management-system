@@ -10,7 +10,7 @@ export class DialogService {
     private environmentInjector: EnvironmentInjector
   ) {}
 
-  openConfirmDialog(data: { title: string, message: string, type: string }): Promise<boolean> {
+  openConfirmDialog(data: { title: string, message: string, type: string }): Promise<any> {
     if (this.isDialogOpen) {
       return Promise.resolve(false);
     }

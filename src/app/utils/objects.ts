@@ -1,4 +1,7 @@
 import { DateTime } from 'luxon'
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 import { Allocation } from '../models/allocation.model';
 import { Employee } from '../models/employee.model';
@@ -122,4 +125,32 @@ export function  refactorHistory(data: History[]) {
       'Date': DateTime.fromMillis(el.date).toFormat('dd-MM-yyyy') || '-',
     }
   })
+}
+
+export function generateExcell(data: any[]) {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { data: worksheet },
+      SheetNames: ['data'],
+    };
+
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    return new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+}
+
+export function generatePDF(data: any[]) {
+  const doc = new jsPDF();
+    // Extract headers from the first object
+    const headers = Object.keys(data[0]);
+
+    autoTable(doc, {
+      head: [headers],
+      body: data.map((item) => headers.map((header) => item[header])),
+    });
+
+    return doc
 }
