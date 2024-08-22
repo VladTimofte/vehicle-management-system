@@ -56,8 +56,8 @@
         </div>
         <div class="right-content">
           <div *ngIf="conditionalDisplayActionBar()" class="actions-bar-wrapper">
-            <mat-icon (click)="exportToExcell()" class="low-scale">description</mat-icon>
-            <mat-icon class="low-scale">picture_as_pdf</mat-icon>
+            <mat-icon (click)="exportToDocument('excell')" class="low-scale" title="Download as Excell">description</mat-icon>
+            <mat-icon (click)="exportToDocument('pdf')" class="low-scale" title="Download as PDF">picture_as_pdf</mat-icon>
             <mat-icon class="low-scale">mail</mat-icon>
           </div>
           <router-outlet></router-outlet>

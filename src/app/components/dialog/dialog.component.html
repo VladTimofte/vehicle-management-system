@@ -2,6 +2,9 @@
 <div class="modal">
   <div class="modal-dialog">
     <div class="modal-content">
+      <div class="close-button">
+        <span class="low-scale" (click)="cancel()">&times;</span>
+      </div>
       <div class="modal-header">
         <h3 class="modal-title">
           <mat-icon class="error-icon" *ngIf="type === 'error'">highlight_off</mat-icon>
@@ -10,7 +13,6 @@
           <mat-icon class="info-icon" *ngIf="type === 'info'">info</mat-icon>
           {{ title }}
         </h3>
-        <span>&times;</span>
       </div>
       <br />
       <div class="modal-body">

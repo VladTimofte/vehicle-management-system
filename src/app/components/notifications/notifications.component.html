@@ -6,11 +6,13 @@
   <div class="notifications-body">
     <div *ngIf="notifications?.length; else noNotifications">
       <div
-        class="notification-element"
         *ngFor="let item of notifications; let i = index"
       >
+      <div class="notification-element">
         <mat-icon class="low-scale">{{ item.icon }}</mat-icon>
         <div class="notification">{{ item.notification }}</div>
+      </div>
+      <hr>
       </div>
     </div>
     <ng-template #noNotifications>
