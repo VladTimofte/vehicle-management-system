@@ -95,6 +95,7 @@ export class HandleDocument {
     if (data.length > 0) {
       generatePDF(data).save(`${fileName}.pdf`);
     } else {
+      
       this.dialogService.openConfirmDialog({
         title: 'Cannot download',
         message: 'Cannot generate PDF file, since there is no data',
@@ -119,12 +120,20 @@ export class HandleDocument {
                 this.emailService.sendEmail({
                   to_email: response.sendTo,
                   message: response.messageInput,
-                  link_url: fileUploadedRes.url,
+                  link_url: fileUploadedRes.secure_url,
                 });
               });
           }
           if (response.documentType === 'pdf') {
-            // Generate and upload PDF file
+            this.fileUploadService
+            .generateAndUploadPdf(data)
+            .subscribe((fileUploadedRes) => {
+              this.emailService.sendEmail({
+                to_email: response.sendTo,
+                message: response.messageInput,
+                link_url: fileUploadedRes.secure_url,
+              });
+            });
           }
         });
     } else {
