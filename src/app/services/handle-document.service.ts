@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { saveAs } from 'file-saver';
 import { DateTime } from 'luxon';
 import { VehiclesService } from './crud/vehicles.service';
@@ -16,11 +16,15 @@ import {
 import { DialogService } from './dialog.service';
 import { FileUploadService } from './file-upload.service';
 import { EmailService } from './emailjs.service';
+import { v4 as uuidv4 } from 'uuid';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HandleDocument {
+  public auth = inject(AuthService);
+
   constructor(
     private vehiclesService: VehiclesService,
     private employeesService: EmployeesService,
@@ -48,13 +52,15 @@ export class HandleDocument {
       case '/vehicles':
         fnc(
           refactorVehicles(this.vehiclesService.getVehicles()),
-          `Vehicles_${DateTime.now().toFormat('dd-MM-yyyy HH-mm-ss')}`
+          `Vehicles_${DateTime.now().toFormat('dd-MM-yyyy HH-mm-ss')}`,
+          'VEHICLES_LIST'
         );
         break;
       case '/employees':
         fnc(
           refactorEmployees(this.employeesService.getEmployees()),
-          `Employees_${DateTime.now().toFormat('dd-MM-yyyy HH-mm-ss')}`
+          `Employees_${DateTime.now().toFormat('dd-MM-yyyy HH-mm-ss')}`,
+          'EMPLOYEES_LIST'
         );
         break;
       case '/allocations':
@@ -64,13 +70,15 @@ export class HandleDocument {
             this.employeesService.getEmployees(),
             this.vehiclesService.getVehicles()
           ),
-          `Allocations_${DateTime.now().toFormat('dd-MM-yyyy HH-mm-ss')}`
+          `Allocations_${DateTime.now().toFormat('dd-MM-yyyy HH-mm-ss')}`,
+          'ALLOCATIONS_LIST'
         );
         break;
       case '/history':
         fnc(
           refactorHistory(this.historyService.getHistory()),
-          `History_${DateTime.now().toFormat('dd-MM-yyyy HH-mm-ss')}`
+          `History_${DateTime.now().toFormat('dd-MM-yyyy HH-mm-ss')}`,
+          'HISTORY_LIST'
         );
         break;
       default:
@@ -78,8 +86,16 @@ export class HandleDocument {
     }
   }
 
-  exportToExcell(data: any[], fileName: any = 'data') {
+  exportToExcell(data: any[], fileName: any = 'data', entity: string) {
     if (data.length > 0) {
+      this.historyService.addHistory({
+        id: uuidv4(),
+        user: this.auth.getUserProfile()?.name as string,
+        action: 'DOWNLOAD',
+        entity,
+        resource: 'EXCELL',
+        date: DateTime.now().toMillis(),
+      });
       saveAs(generateExcell(data), `${fileName}.xlsx`);
     } else {
       this.dialogService.openConfirmDialog({
@@ -90,10 +106,18 @@ export class HandleDocument {
     }
   }
 
-  exportToPDF(data: any[], fileName: any = 'data') {
+  exportToPDF(data: any[], fileName: any = 'data', entity: string) {
     // Check if there's data to export
     if (data.length > 0) {
       generatePDF(data).save(`${fileName}.pdf`);
+      this.historyService.addHistory({
+        id: uuidv4(),
+        user: this.auth.getUserProfile()?.name as string,
+        action: 'DOWNLOAD',
+        entity,
+        resource: 'PDF',
+        date: DateTime.now().toMillis(),
+      });
     } else {
       
       this.dialogService.openConfirmDialog({
@@ -104,7 +128,7 @@ export class HandleDocument {
     }
   }
 
-  sendEmail(data: any[], fileName: any = 'data') {
+  sendEmail(data: any[], fileName: any = 'data', entity: string) {
     if (data.length > 0) {
       this.dialogService
         .openConfirmDialog({
@@ -122,6 +146,14 @@ export class HandleDocument {
                   message: response.messageInput,
                   link_url: fileUploadedRes.secure_url,
                 });
+                this.historyService.addHistory({
+                  id: uuidv4(),
+                  user: this.auth.getUserProfile()?.name as string,
+                  action: 'EMAIL',
+                  entity,
+                  resource: `${response.sendTo} | EXCELL`,
+                  date: DateTime.now().toMillis(),
+                });
               });
           }
           if (response.documentType === 'pdf') {
@@ -132,6 +164,14 @@ export class HandleDocument {
                 to_email: response.sendTo,
                 message: response.messageInput,
                 link_url: fileUploadedRes.secure_url,
+              });
+              this.historyService.addHistory({
+                id: uuidv4(),
+                user: this.auth.getUserProfile()?.name as string,
+                action: 'EMAIL',
+                entity,
+                resource: `${response.sendTo} | PDF`,
+                date: DateTime.now().toMillis(),
               });
             });
           }

@@ -143,7 +143,7 @@ export function generateExcell(data: any[]) {
 }
 
 export function generatePDF(data: any[]) {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: 'landscape' });
     // Extract headers from the first object
     const headers = Object.keys(data[0]);
 
