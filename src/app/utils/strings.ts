@@ -85,6 +85,21 @@ export function formatEntityString(string: string): string {
     case 'EMPLOYEE':
       msg = 'An employee';
       break;
+    case 'History':
+      msg = 'A history unit';
+      break;
+    case 'ALLOCATIONS_LIST':
+      msg = 'Allocations List';
+      break;
+    case 'VEHICLES_LIST':
+      msg = 'Vehicles List';
+      break;
+    case 'EMPLOYEES_LIST':
+      msg = 'Employees List';
+      break;
+    case 'HISTORY_LIST':
+      msg = 'A History List';
+      break;
     default:
       msg = 'An entity';
       break;
@@ -93,17 +108,23 @@ export function formatEntityString(string: string): string {
 }
 
 export function formatActionString(string: string): string {
-    let msg: string = '';
-    switch (string) {
-      case 'DELETE':
-        msg = 'Deleted';
-        break;
-      case 'ADD':
-        msg = 'Created';
-        break;
-      default:
-        msg = 'Modified';
-        break;
-    }
-    return msg;
+  let msg: string = '';
+  switch (string) {
+    case 'DELETE':
+      msg = 'Deleted';
+      break;
+    case 'ADD':
+      msg = 'Created';
+      break;
+    case 'DOWNLOAD':
+      msg = 'Downloaded';
+      break;
+    case 'EMAIL':
+      msg = 'Emailed';
+      break;
+    default:
+      msg = 'Modified';
+      break;
   }
+  return msg;
+}

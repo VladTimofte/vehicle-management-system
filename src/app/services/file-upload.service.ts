@@ -59,7 +59,7 @@ export class FileUploadService {
   }
 
   private generatePdfBlob(data: any[]): Promise<Blob> {
-    const doc = new jsPDF();
+    const doc = new jsPDF({ orientation: 'landscape' });
 
     autoTable(doc, {
       head: [Object.keys(data[0])],
