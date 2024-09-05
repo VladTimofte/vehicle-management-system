@@ -17,6 +17,8 @@
         </div>
         <div class="menu-bar-right-element">
           <div class="user-actions-wrapper">
+                <mat-icon class="low-scale animation pointer-events-none" (click)="toggleDarkMode()" *ngIf="isDarkMode">dark_mode</mat-icon>
+                <mat-icon class="low-scale animation pointer-events-none" (click)="toggleDarkMode()" *ngIf="!isDarkMode">light_mode</mat-icon>
             <mat-icon matBadge="{{notifications.length}}" class="low-scale" (click)="openNotifications()"  aria-hidden="false">notifications</mat-icon>
             <app-notifications [display]="areNotificationsOpen" [notifications]="notifications"/>
             <app-auth-button></app-auth-button>

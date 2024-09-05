@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
 import { BehaviorSubject, Observable } from 'rxjs';
+
 import { rolePermissions } from '../data/permissions';
+import { APP_CONFIG } from "@src/app/config/config";
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +16,7 @@ export class PermissionService {
   constructor(private auth: AuthService) {
     this.auth.idTokenClaims$.subscribe(claims => {
       const roles: string[] =
-        claims?.['https://hevicle-management-sys-dev.com/roles'] || [];
+        claims?.[APP_CONFIG.AUTH_SERVICE.ROLES_API] || [];
 
       roles.forEach(role => {
         if (rolePermissions[role as keyof typeof rolePermissions]) {

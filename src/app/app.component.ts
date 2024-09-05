@@ -10,6 +10,7 @@ import { AuthService } from '@auth0/auth0-angular';
 import { DOCUMENT } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatBadgeModule } from '@angular/material/badge';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 import { AppAuthButtonComponent } from './components/app-auth-button/app-auth-button.component';
 import { LoginComponent } from './pages/login/login.component';
@@ -45,6 +46,7 @@ import { DialogService } from './services/dialog.service';
     MatProgressSpinnerModule,
     MatBadgeModule,
     NotificationsComponent,
+    MatSlideToggleModule
   ],
 })
 export class AppComponent implements OnInit {
@@ -57,6 +59,7 @@ export class AppComponent implements OnInit {
   public hasEmployeesAccess$!: boolean;
   public hasAllocationsAccess$!: boolean;
   public hasHistoryAccess$!: boolean;
+  public isDarkMode!: boolean;
   areNotificationsOpen: boolean = false;
   notifications: Notification[] = [];
 
@@ -147,5 +150,17 @@ export class AppComponent implements OnInit {
 
   exportToDocument(action: string) {
     this.handleDocument.exportToDocument(this.router.url, action);
+  }
+
+  toggleDarkMode() {
+    if (!this.isDarkMode) {
+      document.body.classList.remove('light');
+      document.body.classList.add('dark');
+      this.isDarkMode = true
+    } else if (this.isDarkMode) {
+      document.body.classList.remove('dark');
+      document.body.classList.add('light');
+      this.isDarkMode = false
+    }
   }
 }

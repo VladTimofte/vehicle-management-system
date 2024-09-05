@@ -12,6 +12,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { routes } from './app/routes';
 import { AppComponent } from './app/app.component';
 import { environment } from '@src/environments/environment';
+import { APP_CONFIG } from "@src/app/config/config";
 
 if (environment.production) {
   enableProdMode();
@@ -23,8 +24,8 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(BrowserAnimationsModule),
     provideHttpClient(),
     provideAuth0({
-      domain: 'dev-qemisnr832dfdbg6.us.auth0.com',
-      clientId: '5IRcm4DfPrZWdDx9hEPk1X9o98LSuo8g',
+      domain: APP_CONFIG.AUTH_SERVICE.DOMAIN,
+      clientId: APP_CONFIG.AUTH_SERVICE.CLIENT_ID,
       authorizationParams: {
         redirect_uri: window.location.origin,
       },

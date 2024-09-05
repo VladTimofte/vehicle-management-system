@@ -4,6 +4,8 @@ import { AuthService } from '@auth0/auth0-angular';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
+import { APP_CONFIG } from "@src/app/config/config";
+
 @Injectable({
   providedIn: 'root',
 })
@@ -23,7 +25,7 @@ export class RoleGuard implements CanActivate {
           // Dacă utilizatorul este autentificat, verifică rolurile
           return this.auth.idTokenClaims$.pipe(
             map(claims => {
-              const roles = claims?.['https://hevicle-management-sys-dev.com/roles'] || [];
+              const roles = claims?.[APP_CONFIG.AUTH_SERVICE.ROLES_API] || [];
               const allowedRoles = route.data['roles'] as Array<string> || [];
 
               // Asigură-te că 'admin' este întotdeauna permis

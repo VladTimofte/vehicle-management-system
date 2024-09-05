@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { APP_CONFIG } from "@src/app/config/config";
+
 @Injectable({
   providedIn: 'root',
 })
 export class DistanceService {
-  private apiKey = '5b3ce3597851110001cf6248295f210fe0614560a10c6efe63c0d005';
-  private apiUrl = 'https://api.openrouteservice.org/v2/directions/driving-car';
+  private apiKey = APP_CONFIG.OPEN_ROUTE_SERVICE.API_KEY;
+  private apiUrl = APP_CONFIG.OPEN_ROUTE_SERVICE.API_URL;
 
   constructor(private http: HttpClient) {}
 

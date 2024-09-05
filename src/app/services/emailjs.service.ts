@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { init, send } from '@emailjs/browser';
 
+import { APP_CONFIG } from "@src/app/config/config";
+
 @Injectable({
   providedIn: 'root'
 })
 export class EmailService {
 
-  private serviceId = 'service_tpa25u4'; 
-  private templateId = 'template_njbew1g'; 
-  private publicKey = '8AGnXOW-H-n9Ufakl';
+  private serviceId = APP_CONFIG.EMAIL_JS.SERVICE_ID; 
+  private templateId = APP_CONFIG.EMAIL_JS.TEMPLATE_ID; 
+  private publicKey = APP_CONFIG.EMAIL_JS.PUBLIC_KEY;
   constructor() {
     // Inițializează EmailJS cu cheia publică
     init(this.publicKey);

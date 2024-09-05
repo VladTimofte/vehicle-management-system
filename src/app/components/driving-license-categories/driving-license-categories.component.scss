@@ -1,3 +1,5 @@
+@import 'src/themes/variables.scss';
+
 .row {
     display: flex;
     gap: 30px;
@@ -18,7 +20,7 @@
     height: 10rem;
 
       .license-item {
-        border: 1px solid black;
+        border: 1px solid $black_color;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -32,8 +34,8 @@
       }
 
       .selected {
-        box-shadow: 2px 2px 8px #6785C1;
-        border: 5px solid #6785C1;
+        box-shadow: 2px 2px 8px $primary_color;
+        border: 5px solid $primary_color;
         transform: scale(1.1);
       }
   }

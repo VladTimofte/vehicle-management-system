@@ -3,11 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { APP_CONFIG } from "@src/app/config/config";
+
 @Injectable({
   providedIn: 'root'
 })
 export class LocationService {
-  private apiUrl = 'https://nominatim.openstreetmap.org/search';
+  private apiUrl = APP_CONFIG.OPEN_STREET_MAP.LOCATION_API_URL;
 
   constructor(private http: HttpClient) {}
 

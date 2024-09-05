@@ -1,41 +1,29 @@
-
-// Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
-// Plus imports for other components in your app.
-
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
 @include mat.core();
+@import './themes/variables.scss';
 
-// Define the theme object.
-$fleet-management-system-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$azure-palette,
-    tertiary: mat.$blue-palette,
-  ),
-  density: (
-    scale: 0,
-  )
-));
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-:root {
-  @include mat.all-component-themes($fleet-management-system-theme);
+// mixin that enables css variables in light mode
+@mixin lighten() {
+  --bgColor: #{$bgColor_light};
+  --textColor: #{$textColor_light};
 }
 
-// Comment out the line below if you want to use the pre-defined typography utility classes.
-// For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
-// @include mat.typography-hierarchy($fleet-management-system-theme);
+// mixin that enables css variables in dark mode
+@mixin darken() {
+  --bgColor: #{$bgColor_dark};
+  --textColor: #{$textColor_dark};
+}
 
-// Comment out the line below if you want to use the deprecated `color` inputs.
-// @include mat.color-variants-backwards-compatibility($fleet-management-system-theme);
+body.dark {
+    @include darken();
+  }
+  body.light {
+    @include lighten();
+  }
 
-
+body {
+    background: var(--bgColor);;
+}
 
 html, body { height: 100%; width: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
@@ -45,13 +33,13 @@ h3 {
 }
 
 span {
-    color: black;
+    color: $black_color;
 }
 
 button {
     cursor: pointer;
-    background: #6785C1;
-    color: white;
+    background: $primary_color;
+    color: $white_color;
     border: none;
     border-radius: 12px;
     padding: 12px 24px 12px 24px;
@@ -93,7 +81,7 @@ label {
 
 input, select, textarea {
     height: auto;
-    border: 2px solid black;
+    border: 2px solid $black_color;
     font-size: 16px;
     font-weight: 500;
     border-radius: 6px;
@@ -102,7 +90,7 @@ input, select, textarea {
 }
 
 ag-grid-angular {
-    box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.5);
+    box-shadow: $box_shadow;
 }
 
 .pointer-events-none {
