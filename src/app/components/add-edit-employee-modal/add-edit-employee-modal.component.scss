@@ -1,3 +1,5 @@
+@import 'src/themes/variables.scss';
+
 .backdrop {
     background-color: rgba(0, 0, 0, 0.5);
     position: fixed;
@@ -41,10 +43,10 @@
   }
   
   dialog {
-    background-color: white;
+    background-color: $white_color;
     border-radius: 6px;
     border: none;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+    box-shadow: $box_shadow;
     overflow: hidden;
     padding: 1rem;
     top: 2rem;
@@ -53,7 +55,7 @@
   
   h2 {
     margin: 0;
-    color: black;
+    color: $black_color;
   }
   
   textarea {
@@ -61,8 +63,8 @@
     font: inherit;
     padding: 0.15rem 0.25rem;
     border-radius: 4px;
-    border: 1px solid black;
-    background-color: white;
+    border: 1px solid $black_color;
+    background-color: $white_color;
   }
   
   .actions {
@@ -81,24 +83,24 @@
   }
   
   button[type="button"] {
-    color: white;
+    color: $white_color;
   }
   
   button[type="button"]:hover,
   button[type="button"]:active {
-    color: white;
+    color: $white_color;
   }
   
   button[type="submit"] {
-    background-color: #6785C1;
+    background-color: $primary_color;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
   }
   
   button[type="submit"]:hover,
   button[type="submit"]:active {
-    background-color: #6785C1;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+    background-color: $primary_color;
+    box-shadow: $box_shadow;
   }
 
   .row {

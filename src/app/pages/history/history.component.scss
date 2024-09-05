@@ -1,3 +1,5 @@
+@import 'src/themes/variables.scss';
+
 .actions {
     display: flex;
     place-content: flex-end;
@@ -5,7 +7,7 @@
     justify-content: space-between;
 
     .search {
-        box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.5);
+        box-shadow: $box_shadow;
     }
 
     .search-wrapper {
@@ -14,7 +16,7 @@
     }
 
     button.disabled {
-        background: gray;
+        background: $gray_color;
         pointer-events: none;
     }
 }

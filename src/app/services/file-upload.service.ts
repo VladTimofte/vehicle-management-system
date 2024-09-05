@@ -5,12 +5,14 @@ import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+import { APP_CONFIG } from "@src/app/config/config";
+
 @Injectable({
   providedIn: 'root',
 })
 export class FileUploadService {
-  private cloudinaryUrl = 'https://api.cloudinary.com/v1_1/digssbgxf/raw/upload';
-  private uploadPreset = 'vehicle_management_system';
+  private cloudinaryUrl = APP_CONFIG.CLOUDINARY.API_URL;
+  private uploadPreset = APP_CONFIG.CLOUDINARY.UPLOAD_PRESET;
 
   constructor(private http: HttpClient) {}
 

@@ -1,7 +1,9 @@
+@import 'src/themes/variables.scss';
+
 .login-card {
     max-width: 400px;
     border-radius: 12px;
-    box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.5);
+    box-shadow: $box_shadow;
   }
 
   mat-card-header {
