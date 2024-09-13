@@ -1,3 +1,10 @@
-<p>dashboard works!</p>
-
-<!-- Research on dashboard component -->
+<div class="dashboard-container">
+    <h3 class="dahsboard-title">Technologies I Have Used</h3>
+    <div class="tech-card-container">
+      <a *ngFor="let tech of technologies" [href]="tech.url" target="_blank" class="tech-card low-scale">
+        <img [src]="tech.image" [alt]="tech.name" class="tech-image" />
+        <div class="tech-name">{{ tech.name }}</div>
+      </a>
+    </div>
+  </div>
+  

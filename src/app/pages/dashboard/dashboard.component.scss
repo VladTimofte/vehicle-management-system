@@ -1,0 +1,55 @@
+@import 'src/themes/variables.scss';
+
+.tech-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+  }
+  
+  .tech-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 150px;
+    text-align: center;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none
+  }
+  
+  .tech-image {
+    width: 100px;
+    height: auto;
+    margin-bottom: 0.5rem;
+  }
+  
+  .tech-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .dashboard-container {
+    padding: 0 150px;
+    position: absolute;
+    top: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 70px;
+  }
+
+  .dahsboard-title {
+    font-size: 1.75rem; /* Dimensiune mai mare pentru un aspect de titlu */
+    font-weight: 600; /* Grosime medie a fontului */
+    color: #333; /* Culoare textului pentru contrast */
+    margin-bottom: 1rem; /* Spațiu sub titlu */
+    border-bottom: 2px solid $primary_color; /* Linie de subliniere colorată */
+    padding-bottom: 0.5rem; /* Spațiu între text și linia de subliniere */
+    text-align: center; /* Centrează textul */
+    font-family: 'Arial', sans-serif; /* Font modern și lizibil */
+  }
