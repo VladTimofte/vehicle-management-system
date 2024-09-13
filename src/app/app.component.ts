@@ -137,7 +137,7 @@ export class AppComponent implements OnInit {
 
   conditionalDisplayActionBar(): boolean {
     const url = this.router.url;
-    return !url.includes('track');
+    return !(url === '/');
   }
 
   isAccessDeniedRoute(): boolean {
